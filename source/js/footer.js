@@ -1,5 +1,14 @@
 
 $(document).ready(function () {
+  // Xenon collapses tablet sidebars; our mobile layout needs expandable menus.
+  function syncMobileSidebar() {
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      $('.sidebar-menu').removeClass('collapsed');
+    }
+  }
+  $(window).on('resize.webstack xenon.resized', syncMobileSidebar);
+  syncMobileSidebar();
+
   $('.mode-toggle').attr('aria-pressed', String(document.body.classList.contains('night')));
   //img lazy loaded
   if (typeof lozad === 'function') {

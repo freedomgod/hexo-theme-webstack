@@ -41,7 +41,7 @@ function search(searchIconUrl) {
             name: "京东",
             img: "url(" + searchIconUrl + ") -80px -75px",
             position: "0px -120px",
-            url: "http://search.jd.com/Search?keyword="
+            url: "https://search.jd.com/Search?keyword="
         }, {
             name: "天猫",
             img: "url(" + searchIconUrl + ") -105px -75px",
@@ -66,7 +66,7 @@ function search(searchIconUrl) {
             name: "B站",
             img: "url(" + searchIconUrl + ") -105px -125px",
             position: "-40px -200px",
-            url: "http://search.bilibili.com/all?keyword="
+            url: "https://search.bilibili.com/all?keyword="
         }, {
             name: "豆瓣",
             img: "url(" + searchIconUrl + ") -80px -150px",
@@ -81,7 +81,7 @@ function search(searchIconUrl) {
             name: "GitHub",
             img: "url(" + searchIconUrl + ") -80px -175px",
             position: "0px -280px",
-            url: "https://github.com/search?utf8=✓&q="
+            url: "https://github.com/search?q="
         }]
     };
     var localSearchData = localStorage.getItem("searchData");

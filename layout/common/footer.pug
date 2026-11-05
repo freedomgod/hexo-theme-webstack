@@ -6,15 +6,18 @@ footer.main-footer.sticky.footer-type-1
       |
       a(href="javascript:void(0);")
         strong= config.author
-      |  | Design by
-      a(href="http://viggoz.com", target="_blank")
+      = ' | Original design by '
+      a(href="https://github.com/WebStackPage/WebStackPage.github.io", target="_blank" rel="noopener noreferrer")
         strong Viggo
-      |  | Power by
-      a(href="https://hexo.io/", target="_blank")
+      = ' | Powered by '
+      a(href="https://hexo.io/", target="_blank" rel="noopener noreferrer")
         strong Hexo
-      |  &
-      a(href="https://github.com/HCLonely/hexo-theme-webstack/", target="_blank")
-        strong hexo-theme-webstack
+      = ' | Original theme by '
+      a(href="https://github.com/HCLonely/hexo-theme-webstack", target="_blank" rel="noopener noreferrer")
+        strong HCLonely
+      = ' | Fork maintained by '
+      a(href="https://github.com/freedomgod/hexo-theme-webstack", target="_blank" rel="noopener noreferrer")
+        strong freedomgod
 
     if setting.busuanzi && setting.busuanzi.enable && setting.busuanzi.position === 'footer'
       p

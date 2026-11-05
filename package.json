@@ -1,7 +1,8 @@
 {
   "name": "hexo-theme-webstack",
-  "version": "3.0.5",
-  "description": "A hexo theme based on webstack.",
+  "version": "3.0.5-freedomgod.1",
+  "private": true,
+  "description": "A WebStack navigation theme for Hexo, maintained by freedomgod as a fork of HCLonely/hexo-theme-webstack.",
   "keywords": [
     "hexo",
     "theme",
@@ -9,22 +10,26 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "dev": "node tools/hexo-dev.cjs server",
     "build": "node tools/hexo-dev.cjs generate",
+    "test": "node tools/verify-install.cjs",
     "postinstall": "node ./move_config.js"
   },
   "author": "HCLonely <h1606051253@gmail.com>",
+  "contributors": [
+    "freedomgod (https://github.com/freedomgod)"
+  ],
+  "homepage": "https://github.com/freedomgod/hexo-theme-webstack#readme",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HCLonely/hexo-theme-webstack/issues",
-    "email": "h1606051253@gmail.com"
+    "url": "https://github.com/freedomgod/hexo-theme-webstack/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HCLonely/hexo-theme-webstack.git"
+    "url": "https://github.com/freedomgod/hexo-theme-webstack.git"
   },
   "dependencies": {
     "hexo-renderer-pug": "^3.0.0",

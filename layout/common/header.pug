@@ -29,7 +29,7 @@ a.skip-link(href='#main-content') 跳到主要内容
             a.smooth(href=`#${e.name.replace(/[\s]+/g, '-')}`)
               i(class=e.icon)
               span.title= e.name
-      if setting.about
+      if setting.about && setting.about.url
         li.submit-tag
           a(href=url_for(setting.about.url))
             i(class=setting.about.icon)

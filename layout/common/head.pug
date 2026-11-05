@@ -1,8 +1,10 @@
 meta(charset="utf-8")
 meta(http-equiv="X-UA-Compatible" content="IE=edge")
 meta(name="viewport" content="width=device-width, initial-scale=1.0")
-meta(name="author" content="viggo")
-title #{setting.tittle || config.title} - #{setting.subtitle || config.subtitle}
+meta(name="author" content=setting.author || config.author)
+- const pageTitle = setting.title || setting.tittle || config.title
+- const documentTitle = [pageTitle, setting.subtitle || config.subtitle].filter(Boolean).join(' - ')
+title= documentTitle
 meta(name="keywords" content=setting.keywords || config.keywords)
 meta(name="description" content=setting.description || config.description)
 link(rel="shortcut icon" href=url_for(setting.favicon))
@@ -25,16 +27,16 @@ script.
 // FB Open Graph
 meta(property="og:type" content="article")
 meta(property="og:url" content=url)
-meta(property="og:title" content=`${setting.tittle || config.title} - ${setting.subtitle || config.subtitle}`)
+meta(property="og:title" content=documentTitle)
 meta(property="og:description" content=setting.description || config.description)
-meta(property="og:site_name" content=`${setting.tittle || config.title} - ${setting.subtitle || config.subtitle}`)
+meta(property="og:site_name" content=config.title)
 
 if setting.banner
   meta(property="og:image" content=setting.banner)
 
 // Twitter Cards
 meta(name="twitter:card" content="summary_large_image")
-meta(name="twitter:title" content=`${setting.tittle || config.title} - ${setting.subtitle || config.subtitle}`)
+meta(name="twitter:title" content=documentTitle)
 meta(name="twitter:description" content=setting.description || config.description)
 
 if setting.banner

@@ -2,9 +2,5 @@ node_modules
 .vscode
 .history
 .npm-cache/
-output/playwright/
-output/hexo-upgrade-backup-*/
+output/
 .hexo-dev/
-output/hexo8-*/
-output/hexo8-*.yml
-output/hexo8-*.json

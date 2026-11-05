@@ -64,7 +64,7 @@ body.page-body
             | search('#{url_for('/images/search_icon.png')}')
 
       if is_home() || isChildPage
-        - const menuSetting = isChildPage ? page : theme
+        - const menuSetting = setting
         each e in menuSetting.menu
           if e.submenu
             each subMenu in e.submenu
