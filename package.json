@@ -12,6 +12,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "dev": "node tools/hexo-dev.cjs server",
+    "build": "node tools/hexo-dev.cjs generate",
     "postinstall": "node ./move_config.js"
   },
   "author": "HCLonely <h1606051253@gmail.com>",
@@ -27,5 +29,9 @@
   "dependencies": {
     "hexo-renderer-pug": "^3.0.0",
     "pug": "^3.0.3"
+  },
+  "devDependencies": {
+    "hexo": "8.1.2",
+    "hexo-server": "3.0.0"
   }
 }

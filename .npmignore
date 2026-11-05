@@ -1,3 +1,8 @@
 screenshot/
 .github/
 .history/
+.npm-cache/
+output/
+.hexo-dev/
+dev/
+tools/

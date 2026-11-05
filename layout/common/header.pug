@@ -1,21 +1,22 @@
+a.skip-link(href='#main-content') 跳到主要内容
 .sidebar-menu.toggle-others.fixed
   .sidebar-menu-inner
     header.logo-env
       .logo
         a(href=url_for('/index.html')).logo-expanded
-          img(src=url_for(setting.logo ? setting.logo.expanded : ''), width='100%', alt='')
+          img(src=url_for(setting.logo ? setting.logo.expanded : ''), width='100%', alt=config.title)
         a(href=url_for('/index.html')).logo-collapsed
-          img(src=url_for(setting.logo ? setting.logo.collapsed : ''), width='40', alt='')
+          img(src=url_for(setting.logo ? setting.logo.collapsed : ''), width='40', alt=config.title)
       .mobile-menu-toggle.visible-xs
-        a(href='javascript:void(0)', data-toggle='user-info-menu')
+        a(href='#', data-toggle='user-info-menu' aria-label='显示工具栏')
           i.linecons-cog
-        a(href='javascript:void(0)', data-toggle='mobile-menu')
+        a(href='#', data-toggle='mobile-menu' aria-label='展开分类导航')
           i.fas.fa-bars
-    ul#main-menu.main-menu
+    ul#main-menu.main-menu(aria-label='网站分类')
       each e in setting.menu
         li(class=e.submenu && setting.expandAll ? 'expanded' : '')
           if e.submenu
-            a.fas.fa-angle-down(style='cursor: pointer;')
+            a.fas.fa-angle-down(href='#' role='button' aria-expanded=setting.expandAll ? 'true' : 'false')
               i(class=e.icon)
               span.title= e.name
             ul(style=`display: ${setting.expandAll ? 'block' : 'none'}`)

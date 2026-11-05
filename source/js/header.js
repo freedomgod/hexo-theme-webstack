@@ -203,10 +203,29 @@ function search(searchIconUrl) {
         $(".search-engine-list").append('<li><span style="background:' + searchData.data[i].img + (searchData.custom ? ' 0% 0% / cover no-repeat' : '') + '"/></span>' +
             searchData.data[i].name + "</li>")
     }
-    $(".search-icon, .search-engine").hover(function () {
-        $(".search-engine").css("display", "block")
-    }, function () {
-        $(".search-engine").css("display", "none")
+    $(".search-icon").on('click', function () {
+        var expanded = $(this).attr('aria-expanded') === 'true';
+        $(".search-engine").toggle(!expanded);
+        $(this).attr('aria-expanded', String(!expanded));
+    });
+    $(document).on('click', function (event) {
+        if (!$(event.target).closest('.search-icon, .search-engine').length) {
+            $(".search-engine").hide();
+            $(".search-icon").attr('aria-expanded', 'false');
+        }
+    });
+    $(".search-engine-list li").attr({tabindex: '0', role: 'button'}).on('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            $(this).click();
+            $(".search-icon").focus();
+        }
+    });
+    $(document).on('keydown', function (event) {
+        if (event.key === 'Escape') {
+            $(".search-engine").hide();
+            $(".search-icon").attr('aria-expanded', 'false');
+        }
     });
     $("#hot-btn").click(function () {
         $(this).toggleClass("off");
@@ -224,6 +243,7 @@ function search(searchIconUrl) {
         }
         searchData.thisSearch = searchData.data[index].url;
         $(".search-engine").css("display", "none");
+        $(".search-icon").attr('aria-expanded', 'false');
         localStorage.searchData = JSON.stringify(searchData)
     });
     if (searchData.custom) {
@@ -237,11 +257,7 @@ function search(searchIconUrl) {
             window.open(searchData.thisSearch + textValue);
             $("#box ul").html("")
         } else {
-            layer.msg("请输入关键词！", {
-                time: 500
-            }, function () {
-                $("#txt").focus()
-            })
+            $("#txt").focus();
         }
     })
 }
@@ -256,4 +272,5 @@ function switchNightMode() {
         document.body.classList.remove('night');
         document.cookie = "night=0;path=/"
     }
+    $('.mode-toggle').attr('aria-pressed', String(document.body.classList.contains('night')));
 }

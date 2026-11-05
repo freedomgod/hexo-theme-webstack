@@ -1,17 +1,15 @@
-h4.text-gray
-  i.linecons-tag(style='margin-right: 7px;' id=menuName.replace(/[\s]+/g, '-'))
-  = menuName
-
-.row
-  each menu in menus
-    .col-sm-3
-      .xe-widget.xe-conversations.box2.label-info(onclick='window.open("' + url_for(menu.url) + '", "_blank")' data-toggle='tooltip' data-placement='bottom' title='' data-original-title=url_for(menu.url))
-        .xe-comment-entry
-          a.xe-user-img
-            img.lozad.img-circle(data-src=url_for(menu.img) width='40')
-          .xe-comment
-            a.xe-user-name.overflowClip_1(href='#')
-              strong= menu.name
-            p.overflowClip_2= menu.description
-
-br
+section.resource-section(aria-label=menuName)
+  .section-heading
+    h2.text-gray(id=menuName.replace(/[\s]+/g, '-'))
+      i.linecons-tag(aria-hidden='true')
+      = menuName
+    span.section-count(aria-label=menus.length + ' 个网站')= menus.length
+  .resource-grid
+    each menu in menus
+      a.resource-card(href=url_for(menu.url) target='_blank' rel='noopener noreferrer' title=menu.name + ' · ' + menu.description)
+        span.resource-icon
+          img(src=url_for(menu.img) loading='lazy' decoding='async' width='40' height='40' alt='' onerror="this.hidden = true")
+        span.resource-copy
+          strong.resource-name= menu.name
+          span.resource-description= menu.description
+        i.fas.fa-arrow-up.resource-arrow(aria-hidden='true')

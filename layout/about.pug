@@ -1,16 +1,17 @@
-body.page-body.boxed-container
+- const setting = Object.assign({}, theme, page)
+body.page-body.boxed-container.about-page
   nav.navbar.horizontal-menu.navbar-fixed-top
     .navbar-inner
       .navbar-brand
         a(href=url_for('/index.html')).logo
-          img.hidden-xs(src=url_for(theme.logo.dark), width='180px', alt='')
-          img.visible-xs(src=url_for(theme.logo.expanded), width='180px', alt='')
+          img.hidden-xs(src=url_for(theme.logo.expanded), width='180px', alt=config.title)
+          img.visible-xs(src=url_for(theme.logo.expanded), width='180px', alt=config.title)
       .navbar-mobile-clear
       if theme.githubCorner
         != theme.githubCorner
 
   .page-container
-    .main-content
+    main#main-content.main-content
       .row
         .col-md-12
           .panel.panel-default
@@ -27,21 +28,15 @@ body.page-body.boxed-container
               h4.text-gray= theme.aboutPage.webmaster.head
               .row
                 .col-sm-4
-                  .xe-widget.xe-conversations.box2.label-info(
-                    onclick='window.open("' + url_for(theme.aboutPage.webmaster.url) + '", "_blank")'
-                    data-toggle='tooltip'
-                    data-placement='bottom'
-                    data-original-title=url_for(theme.aboutPage.webmaster.url)
-                  )
-                    .xe-comment-entry
-                      a.xe-user-img
-                        img.img-circle(src=url_for(theme.aboutPage.webmaster.img), width='40')
-                      .xe-comment
-                        a.xe-user-name.overflowClip_1(href='#')
-                          strong= theme.aboutPage.webmaster.name
-                        p.overflowClip_2= theme.aboutPage.webmaster.description
+                  a.resource-card(href=url_for(theme.aboutPage.webmaster.url) target='_blank' rel='noopener noreferrer')
+                    span.resource-icon
+                      img(src=url_for(theme.aboutPage.webmaster.img) width='40' height='40' alt='')
+                    span.resource-copy
+                      strong.resource-name= theme.aboutPage.webmaster.name
+                      span.resource-description= theme.aboutPage.webmaster.description
                 .col-md-8
                   .row
                     .col-sm-12
                       != theme.aboutPage.webmaster.html
                   br
+  include common/footer

@@ -4,6 +4,23 @@
 
 ![screenshot](https://github.com/HCLonely/hexo-theme-webstack/raw/master/screenshot/screenshot.png)
 
+## 本地开发
+
+主题开发环境使用 Hexo **8.1.2**，需要 Node.js **20.19.0 或更高版本**。在主题仓库目录运行：
+
+```shell
+npm ci
+npm run dev
+```
+
+打开 `http://localhost:4000`，可查看首页、`/about/` 和 `/child/`。修改主题模板、样式后刷新页面即可查看效果。
+
+```shell
+npm run build
+```
+
+该命令使用真实 Hexo 生成并检查三个示例页面，输出在 `.hexo-dev/public/`。开发站点通过目录链接直接使用本仓库主题，依赖版本由 `package-lock.json` 锁定。示例站点配置在 `dev/_config.yml`，主题配置来自 `_config.example.yml`；修改配置后重新启动开发服务器。`.hexo-dev` 是自动生成的工作目录，不参与 Git 提交或 npm 发布。
+
 ## 安装
 
 ### hexo >= 4.0
@@ -107,6 +124,12 @@ flag:
 ```yml
 search: true
 ```
+
+### 首页样式
+
+主题采用浅灰背景、蓝绿色强调色和自适应卡片布局，并提供配套的夜间模式。搜索框在主内容区域居中显示，下方直接展示网站分类与卡片。
+
+颜色、圆角、间距和阴影集中在 `source/css/hclonely.css` 顶部的 `--ws-*` 变量中；`body.night` 定义夜间模式。主题样式在基础样式之后加载，仍可通过 `custom.head` 中的样式覆盖。网站卡片支持键盘访问，搜索框左侧按钮可展开搜索引擎列表。
 
 ### userDefinedSearchData
 
