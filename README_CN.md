@@ -238,4 +238,4 @@ npm test
 - 原始 WebStack 设计：[WebStackPage / Viggo](https://github.com/WebStackPage/WebStackPage.github.io)。
 - 静态网站框架：[Hexo](https://hexo.io/)。
 
-本 fork 的问题请提交到[当前仓库的 Issues](https://github.com/freedomgod/hexo-theme-webstack/issues)。项目采用 [MIT 许可证](LICENSE)，保留原始版权声明及内置第三方资源的声明。附带的 WebStack 标志是继承的示例素材，建立自己的站点时请替换。
+本 fork 的维护入口是[当前仓库](https://github.com/freedomgod/hexo-theme-webstack)。维护者在 Settings → General → Features 中启用 Issues 后，可通过仓库的 Issues 标签反馈本分支的问题。项目采用 [MIT 许可证](LICENSE)，保留原始版权声明及内置第三方资源的声明。附带的 WebStack 标志是继承的示例素材，建立自己的站点时请替换。

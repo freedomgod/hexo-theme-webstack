@@ -238,4 +238,4 @@ The build checks the three example pages using Hexo 8.1.2. The test builds a sep
 - Original WebStack design: [WebStackPage / Viggo](https://github.com/WebStackPage/WebStackPage.github.io).
 - Static site framework: [Hexo](https://hexo.io/).
 
-Report issues for this fork in [this repository's issue tracker](https://github.com/freedomgod/hexo-theme-webstack/issues). Licensed under [MIT](LICENSE); original copyright notices and bundled third-party notices remain intact. The included WebStack logos are inherited sample assets; replace them for your own site.
+The maintenance entry point is [this repository](https://github.com/freedomgod/hexo-theme-webstack). Once the maintainer enables Issues under Settings → General → Features, use its Issues tab for fork-specific reports. Licensed under [MIT](LICENSE); original copyright notices and bundled third-party notices remain intact. The included WebStack logos are inherited sample assets; replace them for your own site.
