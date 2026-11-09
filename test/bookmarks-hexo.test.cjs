@@ -176,3 +176,10 @@ for (const extension of ['yml', 'yaml', 'json']) test(`export-db and fresh deplo
     assert.deepEqual(errors, []);
   } finally { await fresh.exit(); }
 });
+
+test('bookmarks command names the supported actions and installed version', async t => {
+  const { hexo } = await fixture(t, false);
+  await assert.rejects(hexo.call('bookmarks', { _: [] }),
+    /Missing bookmarks action\. Usage: hexo bookmarks <init\|export\|export-db> \(hexo-theme-webstack \d+\.\d+\.\d+/);
+  await assert.rejects(hexo.call('bookmarks', { _: ['publish'] }), /Unknown bookmarks action "publish"\./);
+});
