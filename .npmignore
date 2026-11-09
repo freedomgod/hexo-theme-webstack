@@ -7,3 +7,7 @@ output/
 dev/
 tools/
 docs/superpowers/
+test/
+.webstack/
+examples/*.tmp
+*.tgz

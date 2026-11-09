@@ -9,9 +9,9 @@ async function main() {
   const root = path.resolve(__dirname, '..');
   await fs.mkdir(path.join(root, 'output'), {recursive: true});
   const base = await fs.mkdtemp(path.join(root, 'output', 'install-check-'));
-  const themeDir = path.join(base, 'themes', 'webstack');
+  const themeDir = path.join(base, 'themes', 'webstack-next');
   await fs.mkdir(themeDir, {recursive: true});
-  for (const entry of ['layout', 'source', 'scripts', 'package.json']) {
+  for (const entry of ['layout', 'source', 'scripts', 'lib', 'examples', '_config.example.yml', 'package.json']) {
     await fs.cp(path.join(root, entry), path.join(themeDir, entry), {recursive: true});
   }
   await fs.mkdir(path.join(base, 'source', 'child'), {recursive: true});
@@ -28,9 +28,9 @@ async function main() {
   await fs.writeFile(path.join(base, 'source', 'child', 'index.html'), '---\nlayout: page\ntype: child\ntitle: Child resources\n---\n');
   const theme = yaml.load(await fs.readFile(path.join(root, '_config.example.yml'), 'utf8'));
   theme.about = {};
-  await fs.writeFile(path.join(base, '_config.webstack.yml'), yaml.dump(theme));
+  await fs.writeFile(path.join(base, '_config.webstack-next.yml'), yaml.dump(theme));
   await fs.writeFile(path.join(base, '_config.yml'), yaml.dump({
-    theme: 'webstack', title: 'Consumer site', author: 'Site Owner', language: 'en',
+    theme: 'webstack-next', title: 'Consumer site', author: 'Site Owner', language: 'en',
     url: 'https://example.com/navigation', root: '/navigation/'
   }));
   const hexo = new Hexo(base, {silent: true});

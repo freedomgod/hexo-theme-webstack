@@ -1,4 +1,4 @@
-title: WebStack
+title: WebStack Next
 subtitle: 收集值得收藏的工具与灵感，探索更高效的数字生活。
 author: freedomgod
 language: zh-CN
@@ -7,7 +7,7 @@ url: http://localhost:4000
 root: /
 source_dir: source
 public_dir: public
-theme: webstack
+theme: webstack-next
 theme_config:
   busuanzi:
     enable: false

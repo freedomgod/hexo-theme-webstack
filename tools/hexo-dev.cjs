@@ -13,10 +13,10 @@ async function main() {
   }
 
   await fs.mkdir(path.join(base, 'themes'), { recursive: true });
-  const themeDir = path.join(base, 'themes', 'webstack');
+  const themeDir = path.join(base, 'themes', 'webstack-next');
   await fs.mkdir(themeDir, { recursive: true });
   // Link only theme inputs, so watchers never recurse into the generated site.
-  for (const directory of ['layout', 'source', 'scripts']) {
+  for (const directory of ['layout', 'source', 'scripts', 'lib', 'examples']) {
     const target = path.join(root, directory);
     const link = path.join(themeDir, directory);
     try {
@@ -29,6 +29,7 @@ async function main() {
       await fs.symlink(target, link, process.platform === 'win32' ? 'junction' : 'dir');
     }
   }
+  await fs.copyFile(path.join(root, '_config.example.yml'), path.join(themeDir, '_config.example.yml'));
   await fs.copyFile(path.join(root, 'package.json'), path.join(themeDir, 'package.json'));
 
   await fs.writeFile(path.join(base, 'package.json'), JSON.stringify({
@@ -38,7 +39,7 @@ async function main() {
     dependencies: { 'hexo-renderer-pug': '*', 'hexo-server': '*' }
   }, null, 2));
   await fs.copyFile(path.join(root, 'dev', '_config.yml'), path.join(base, '_config.yml'));
-  await fs.copyFile(path.join(root, '_config.example.yml'), path.join(base, '_config.webstack.yml'));
+  await fs.copyFile(path.join(root, '_config.example.yml'), path.join(base, '_config.webstack-next.yml'));
   await fs.cp(path.join(root, 'dev', 'source'), path.join(base, 'source'), { recursive: true });
 
   const hexo = new Hexo(base);

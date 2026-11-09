@@ -1,12 +1,7 @@
-const fs = require('fs')
+const path = require('node:path');
+const { setupTheme } = require('./lib/theme-install.cjs');
 
-if (fs.existsSync('../hexo/package.json')){
-  const version = JSON.parse(fs.readFileSync('../hexo/package.json')).version
-  if (parseInt(version.split('.')[0] || '7', 10) >= 5) {
-    const oldConfigPath = '../../source/_data/webstack.yml'
-    const configPath = '../../_config.webstack.yml'
-    if (!fs.existsSync(configPath) && !fs.existsSync(oldConfigPath)) {
-      fs.writeFileSync(configPath, fs.readFileSync('./_config.example.yml'))
-    }
-  }
-}
+// INIT_CWD is the consumer directory for npm install --install-links <local path>.
+const consumer = process.env.INIT_CWD || path.resolve(__dirname, '../..');
+const result = setupTheme(consumer, __dirname);
+if (result) console.log(`WebStack Next: configuration ready at ${result}`);

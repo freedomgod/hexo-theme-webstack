@@ -1,8 +1,8 @@
 {
-  "name": "hexo-theme-webstack",
-  "version": "3.0.5-freedomgod.1",
+  "name": "hexo-theme-webstack-next",
+  "version": "3.0.5-freedomgod.2",
   "private": true,
-  "description": "A WebStack navigation theme for Hexo, maintained by freedomgod as a fork of HCLonely/hexo-theme-webstack.",
+  "description": "WebStack Next: a Hexo navigation theme with local SQLite bookmarks, maintained by freedomgod.",
   "keywords": [
     "hexo",
     "theme",
@@ -15,7 +15,9 @@
   "scripts": {
     "dev": "node tools/hexo-dev.cjs server",
     "build": "node tools/hexo-dev.cjs generate",
-    "test": "node tools/verify-install.cjs",
+    "test": "node tools/verify-install.cjs && node --test test/*.test.cjs",
+    "test:bookmarks": "node --test test/*.test.cjs",
+    "bookmarks:sample": "node tools/create-bookmark-example.cjs",
     "postinstall": "node ./move_config.js"
   },
   "author": "HCLonely <h1606051253@gmail.com>",
@@ -33,6 +35,8 @@
   },
   "dependencies": {
     "hexo-renderer-pug": "^3.0.0",
+    "hexo-util": "^4.0.0",
+    "js-yaml": "^4.1.0",
     "pug": "^3.0.3"
   },
   "devDependencies": {
