@@ -1,80 +1,87 @@
-# WebStack Next · Hexo navigation theme
+# WebStack Next
 
-[中文文档](README_CN.md) · [SQLite setup](#edit-bookmarks-with-sqlite-optional) · [Command reference](#bookmark-command-reference) · [How automatic updates work](#how-automatic-bookmark-updates-work)
+WebStack Next is a [Hexo](https://hexo.io/) theme for building a personal navigation site: a card-based directory of websites, organised into categories and subcategories, with a configurable search box.
 
-A Hexo navigation theme maintained by [freedomgod](https://github.com/freedomgod). Forked from [HCLonely/hexo-theme-webstack](https://github.com/HCLonely/hexo-theme-webstack), based on the original [WebStackPage / Viggo design](https://github.com/WebStackPage/WebStackPage.github.io).
+It is a fork of [HCLonely/hexo-theme-webstack](https://github.com/HCLonely/hexo-theme-webstack), based on the original [WebStackPage / Viggo](https://github.com/WebStackPage/WebStackPage.github.io) design and maintained by [freedomgod](https://github.com/freedomgod). This fork refreshes the card layout, adds light and dark styles, improves keyboard access, and adds an optional local SQLite workflow for managing large bookmark collections.
 
-This fork includes a refreshed card layout, light/dark styles, keyboard-accessible resource cards and search controls, and a local Hexo development site. Original authorship and license notices are preserved.
+[中文文档](README_CN.md) · [Install](#installation) · [Configure](#add-categories-and-bookmarks) · [Bookmarks](#bookmarks-yaml-or-sqlite) · [Commands](#command-reference) · [Troubleshooting](#troubleshooting)
 
-![Theme preview](screenshot/screenshot.png)
+![WebStack Next home page](screenshot/screenshot.png)
+
+## Features
+
+- Responsive card grid with a collapsible sidebar, category icons and two levels of categories.
+- Light and dark appearance, with a switch in the header.
+- Search box that opens your preferred external search engine, with configurable providers and optional hot-keyword suggestions.
+- Keyboard navigation for the sidebar, search box and resource cards.
+- Optional SQLite bookmark database, edited with any SQLite tool and exported during `hexo s`, `hexo g` and `hexo d`.
+- An about page and any number of child pages that reuse the same card layout.
+- Optional busuanzi page-view statistics.
+- All site content and configuration stays in your Hexo site, so theme updates never overwrite it.
 
 ## Requirements
 
-- Git and Node.js **20.19.0 or newer**; Node.js 22 or 24 is used in CI.
-- Optional SQLite mode requires **Node.js 22.13+** (Node.js 24 LTS recommended). It uses built-in `node:sqlite`, without a database server or native dependency installation.
-- A Hexo site. This fork is developed and checked with **Hexo 8.1.2**. Older Hexo versions mentioned in upstream documentation are not part of this fork's validation.
-- This is a navigation/directory theme. It does not provide dedicated blog post or archive layouts.
+| Component | Requirement |
+| --- | --- |
+| Node.js | 20.19.0 or newer |
+| Hexo | 8.x (developed and tested with 8.1.2) |
+| SQLite bookmarks (optional) | Node.js 22.13 or newer, using the built-in `node:sqlite` module |
+| Git | Only needed for the Git installation method |
 
-## Install your latest local theme
+This is a directory theme. It provides the homepage, about and child page layouts; it does not ship post, archive, tag or category layouts. If you also publish a blog, use a different theme for it.
 
-Run the following commands in your **Hexo site root**, not in the theme repository.
+## Installation
 
-If you do not have a site yet, create one first:
+Run every command in your Hexo site root, the folder that contains `_config.yml`.
 
-```shell
-npm install -g hexo-cli
-hexo init my-navigation
-cd my-navigation
-npm install
-```
-
-The independent package is **`hexo-theme-webstack-next`**, the Hexo theme name is **`webstack-next`**, and its configuration is **`_config.webstack-next.yml`**. The original `webstack` theme can remain installed. The repository URL/folder name does not determine the installed package name.
-
-To install your current local working tree, including uncommitted changes, run:
+### Option A: install from Git (recommended)
 
 ```shell
-npm install --install-links "D:/path/to/hexo-theme-webstack" --registry=https://registry.npmjs.org
-hexo config theme webstack-next
-hexo clean
-hexo s
-```
-
-Replace the local path with your development directory. `--install-links` installs a packaged copy under `node_modules/hexo-theme-webstack-next` and installs its renderer dependencies. You do not need to copy theme folders, install Pug separately, or uninstall the original theme. Avoid plain `npm install hexo-theme-webstack`, which refers to the upstream registry package.
-
-With npm installation, **the new theme does not appear in `themes/`**. Seeing only the old `themes/webstack` folder is normal; Hexo loads `node_modules/hexo-theme-webstack-next` when `theme: webstack-next` is selected. The name uses a hyphen, not `webstack_next`. Edit site configuration and data in the site root, not the installed package, because package updates replace installed files.
-
-Installation creates `_config.webstack-next.yml` if absent. It copies your existing `source/_data/webstack.yml` or `_config.webstack.yml` when available; otherwise it uses the bundled sample. It preserves existing new-theme settings on subsequent installs. Missing public assets referenced by the old configuration are retained from the old theme, including its FA6 font bundle when needed; old templates and core CSS/JS do not overwrite the new theme. The old theme and configuration remain unchanged. Template edits made directly to the original theme are not transferred.
-
-`hexo config theme webstack-next` sets the active theme in the site's `_config.yml`. Your site identity remains there:
-
-```yaml
-theme: webstack-next
-title: My Navigation
-subtitle: Useful tools and resources
-author: Your name
-language: en
-```
-
-To switch back, run `hexo config theme webstack`, then `hexo clean` and `hexo s`. Existing per-category files in `source/_data/` remain usable. The whole-theme data file `source/_data/webstack.yml` no longer overrides WebStack Next; its corresponding optional data file is `source/_data/webstack-next.yml`. Prefer the root `_config.webstack-next.yml` for new installations.
-
-If npm lifecycle scripts are disabled, the theme still has built-in defaults. Copy the sample to `_config.webstack-next.yml` yourself if you need an editable config or want to migrate old settings.
-
-### Optional Git installation
-
-Git installation fetches committed repository content, whereas the local installation above includes current working-tree changes:
-
-```shell
-git clone --branch master https://github.com/freedomgod/hexo-theme-webstack.git themes/webstack-next
+git clone https://github.com/freedomgod/hexo-theme-webstack.git themes/webstack-next
 npm install hexo-renderer-pug hexo-util pug js-yaml --save
 ```
 
-Copy `themes/webstack-next/_config.example.yml` to the site root as `_config.webstack-next.yml` (or copy your old `_config.webstack.yml` to that new name), then set `theme: webstack-next`. Do not install both a Git copy and an npm copy of WebStack Next: Hexo prefers `themes/webstack-next` when both exist. `private: true` prevents accidental registry publication; local npm installation is supported.
+Keep the folder name `webstack-next`: Hexo uses the folder name as the theme name.
 
-## Create the homepage and preview
+Copy the sample configuration to your site root and rename it to `_config.webstack-next.yml`:
 
-An existing WebStack site using `hexo-generator-index` can keep its current homepage: the generator already marks it as an index page, so installing and switching themes is sufficient. Open <http://localhost:4000> after `hexo s`.
+```text
+themes/webstack-next/_config.example.yml  ->  _config.webstack-next.yml
+```
 
-For a site without a homepage generator, or when you explicitly want a standalone navigation page, create `source/index.html` with this content:
+Keep the copy in the site root, not inside `themes/`, and edit it instead of the sample in the theme folder.
+
+### Option B: install a local checkout with npm
+
+Use this when you want to work on the theme and see your changes in a site, including uncommitted changes.
+
+```shell
+npm install --install-links "D:/path/to/hexo-theme-webstack" --registry=https://registry.npmjs.org
+```
+
+Replace the path with your checkout. The package is installed as `node_modules/hexo-theme-webstack-next`, with the theme name `webstack-next`, so there is nothing new in `themes/`. The install script creates `_config.webstack-next.yml` and imports settings from an existing `_config.webstack.yml` or `source/_data/webstack.yml` when it finds one; on later installs your existing new-theme settings are kept.
+
+Keep `--install-links` as shown. Without it, npm may link the checkout instead of copying it, and the installer then writes imported assets into your working copy.
+
+### Select the theme
+
+```shell
+hexo config theme webstack-next
+```
+
+This writes `theme: webstack-next` to your site's `_config.yml`. You can also edit that line by hand:
+
+```yaml
+theme: webstack-next
+```
+
+The old `webstack` theme and its configuration can stay installed; the two names do not conflict.
+
+## Create the homepage
+
+If your site already has a homepage generated by `hexo-generator-index` (the default `hexo init` setup), it works as is: the theme renders the navigation on that index page.
+
+For a navigation-only site, create `source/index.html`:
 
 ```yaml
 ---
@@ -84,31 +91,31 @@ title: My Navigation
 ---
 ```
 
-Keep `__index: true`: it identifies this page as the homepage so resource cards render. If your site uses `hexo-generator-index`, give its post index a different route in the site's `_config.yml`:
+`__index: true` tells the theme that this page is the homepage and should render resource cards. If you keep `hexo-generator-index` alongside this page, give the generator another route in the site's `_config.yml` so both do not write `/index.html`:
 
 ```yaml
 index_generator:
   path: blog
 ```
 
-Alternatively, uninstall that generator for a navigation-only site. Do not let it generate the same `/index.html` route as this page. Existing sites should adapt their current homepage instead of overwriting it.
+## Preview and build
 
 ```shell
 hexo clean
-hexo server
+hexo s
 ```
 
-Open <http://localhost:4000>. To generate deployable files:
+Open <http://localhost:4000>. To generate the static site for deployment:
 
 ```shell
 hexo generate
 ```
 
-Deploy the site's `public/` directory using your preferred static host, such as GitHub Pages. Configure the site's `url` and, for a subdirectory deployment, `root` first. Pushing the theme repository does not deploy your personal site. See the [Hexo deployment guide](https://hexo.io/docs/github-pages).
+Upload the generated `public/` folder to your host, or configure a Hexo deployer and run `hexo deploy`. Set the site's `url` in `_config.yml` first; for a site published in a subdirectory, set `root` as well. See the [Hexo deployment guide](https://hexo.io/docs/one-command-deployment).
 
-## Add categories and websites
+## Add categories and bookmarks
 
-Edit `_config.webstack-next.yml`. Each menu's `config` names a list of website cards:
+Everything is configured in `_config.webstack-next.yml` at the site root. The `menu` list is the sidebar; each entry points to a bookmark list through its `config` key:
 
 ```yaml
 menu:
@@ -135,220 +142,59 @@ devTools:
     description: A static site framework.
 ```
 
-Alternatively, store a category's list in `source/_data/hotTools.yml` (a YAML list starting with `- name:`). When present, a site data file takes precedence over the same named list in the theme configuration. Use one source per category. Local custom images belong in the site's `source/images/` directory; reference them as `/images/filename.png`. File name casing must match, including on Linux.
+A category supports two levels: an entry with `submenu` is a parent, and each child points to its own bookmark list. A parent cannot also have bookmarks of its own.
 
-## Edit bookmarks with SQLite (optional)
+Each bookmark accepts:
 
-YAML remains the default. Enable SQLite to manage navigation in a local database while keeping appearance and other settings in your existing theme configuration. The published site remains static.
+| Field | Required | Description |
+| --- | --- | --- |
+| `name` | Yes | Card title. |
+| `url` | Yes | Destination. HTTP(S), FTP, `mailto:`, local paths and anchors are accepted. |
+| `img` | No | Card icon; a URL or a path under your site. Defaults to `/images/favicon.png`. |
+| `description` | No | Short description shown under the title. |
+| `tags` | No | Text tags, stored in the data and kept when converting to SQLite. The current cards do not display them. |
 
-### 1. Install and activate the theme
-
-Complete the installation above first. Use Node.js 22.13+ and make sure the site's `_config.yml` contains `theme: webstack-next`. Run the commands below in your **Hexo site root**, which contains `_config.yml`, rather than inside the theme directory. An existing site without the preview server also needs `npm install hexo-server --save`.
-
-`hexo bookmarks` is a **custom command supplied by this theme**, registered with Hexo's [Console extension API](https://hexo.io/api/console.html). `init` and `export` are its subcommands; they are unrelated to the built-in `hexo init` command that creates a site. The custom command becomes available when Hexo loads the active theme's scripts. You do not need to install a separate bookmarks CLI, and SQLite does not need to be enabled to run initialization.
-
-### 2. Create or import a local database
-
-**Already have bookmarks in YAML? Export those first** instead of initializing sample data:
-
-```shell
-hexo bookmarks export-db
-```
-
-This reads the current homepage menu and its referenced bookmark lists, including separate files in `source/_data/`, and creates the database at `bookmark_db.path` (default `.webstack/bookmarks.sqlite`). It preserves category hierarchy/icons, bookmark order, names, links, images, descriptions and text tags. Existing site data lists override inline lists, matching the theme's rendering priority. Empty categories are retained. The command reads YAML even if SQLite mode is enabled and its database is missing; it neither generates pages nor edits YAML or enables SQLite.
-
-An existing database is never overwritten. Choose another private output when needed:
-
-```shell
-hexo bookmarks export-db --output .webstack/current-bookmarks.sqlite
-```
-
-Then set `bookmark_db.path` to that filename and enable SQLite as shown below. The exporter supports `.yml`, `.yaml` and `.json` list files, rejects duplicate files with the same key, and reports invalid data or unsupported fields instead of silently dropping them. It converts homepage navigation; page-specific front matter and child-page lists are not merged into this database. Database mode assigns new `sqlite_category_<id>` keys, so the existing named YAML files can remain as backups. It does not export the already-active SQLite data; use your SQLite editor's backup/export feature for database backups.
-
-For a new site with no existing bookmarks, create a sample database:
-
-```shell
-hexo bookmarks init
-```
-
-Alternatively, initialize from an existing database (choose one of these initialization/export methods):
-
-```shell
-hexo bookmarks init --from "D:/path/to/Bookmark.db"
-```
-
-The command creates `.webstack/bookmarks.sqlite`, adds `/.webstack/` to the site's `.gitignore`, and refuses to overwrite an existing database. Import uses a consistent SQLite snapshot, including committed WAL changes, without modifying the original. Edit the local copy afterward; later edits to the original are not synchronized. The [generic database sample](examples/bookmarks.sqlite) and [schema SQL](examples/bookmarks.sql) are included with the theme.
-
-Run initialization once. To try a different database later, choose a new private path such as `.webstack/another.sqlite` in `bookmark_db.path` before initializing; keep your existing database as a backup. Do not overwrite it just to restart the server.
-
-### 3. Enable SQLite navigation
-
-Set this in `_config.webstack-next.yml` (or the legacy `source/_data/webstack-next.yml`):
+To keep a long list out of the configuration file, put it in `source/_data/<config>.yml` as a YAML list:
 
 ```yaml
-bookmark_db:
-  enable: true
-  path: .webstack/bookmarks.sqlite
+# source/_data/hotTools.yml
+- name: GitHub
+  url: https://github.com/
+  img: /images/logos/github.png
+  description: Code hosting and collaboration.
 ```
 
-The path is relative to the site root. Enabling SQLite replaces the navigation used for rendering, including the menu and bookmark lists. It does not rewrite your handwritten settings, colors, logos or about-page content. Keep the original YAML navigation if you want to switch back later. Existing databases are not migrated or filled with sample entries automatically.
+A data file named after the category's `config` takes precedence over the inline list. Use one source per category; do not define the same list twice.
 
-### 4. Edit, preview and publish
-
-Before enabling SQLite, edit categories in `_config.webstack-next.yml` under `menu`. For a category with `config: tools`, edit `source/_data/tools.yml` when that file exists; otherwise edit the `tools` list in `_config.webstack-next.yml`. After enabling SQLite, edit `categories` and `bookmarks` in the configured private database with your SQLite editor. Do not edit `webstack.generated.yml`, which is regenerated from the database.
-
-Open the local copy in a SQLite editor, edit categories/bookmarks, **save/commit your changes**, then run `hexo s`, `hexo g`, or `hexo d`. These commands export `webstack.generated.yml` in the site root and apply it during the same generation. SQLite mode makes plain `hexo d` regenerate existing public files before deployment; `hexo g -d` generates once. Configure a Hexo deployer as usual. Restart `hexo s` after database edits; database file watching is not included. For `hexo s --static`, run `hexo g` first.
-
-For day-to-day use:
-
-1. Open `.webstack/bookmarks.sqlite`, change the relevant rows, and commit/save the editor's transaction.
-2. Stop an existing preview with `Ctrl+C`, then run `hexo s` and open `http://localhost:4000`.
-3. Run `hexo g` to inspect generated files, or `hexo d` to generate and deploy with your configured deployer. No manual export or `hexo clean` is required for normal bookmark edits.
-
-Use `hexo bookmarks export` to export YAML explicitly. The generated file contains navigation only; your theme settings and comments are untouched. Do not edit generated YAML. Missing, invalid, exclusively locked databases and invalid category references stop generation/deployment, leaving the previous YAML intact. Conflicting `source/_data/` list keys fail explicitly.
-
-### Bookmark command reference
-
-| Command | Behavior |
-| --- | --- |
-| `hexo bookmarks init` | Creates the local database from the generic sample and adds the private directory to `.gitignore`. Does not enable SQLite or generate pages. |
-| `hexo bookmarks init --from "path/to/Bookmark.db"` | Creates a validated local snapshot of an existing database. Preserves the source and refuses an existing target. |
-| `hexo bookmarks export` | Reads the configured database and exports navigation YAML, even when automatic SQLite mode is disabled. Does not regenerate or refresh served pages. |
-| `hexo bookmarks export-db` | Converts current homepage YAML configuration and referenced site data into a new SQLite database. Preserves YAML and refuses an existing target. |
-| `hexo bookmarks export-db --output .webstack/current.sqlite` | Writes the YAML conversion to a different private file. Does not change `bookmark_db.path` or `enable`. |
-| `hexo s` / `hexo server` | Loads the database during the initial generation and serves current pages. Database-only changes do not trigger its file watcher. |
-| `hexo g` / `hexo generate` | Exports current navigation and generates static files in `public/`. |
-| `hexo d` / `hexo deploy` | In SQLite mode, generates current pages before invoking the configured deployer, even if `public/` exists. |
-| `hexo g -d` / `hexo d -g` | Generates and deploys once, without a generation/deployment loop. |
-| `hexo s --static` | Serves existing `public/` files. Loading may still run generation hooks, but it does not rewrite those files; run `hexo g` first. |
-
-After initialization and generation, a typical site contains:
-
-```text
-my-navigation/
-  _config.yml                  # Hexo settings, theme and deployment
-  _config.webstack-next.yml          # Appearance and bookmark_db settings
-  .gitignore                   # Includes /.webstack/
-  .webstack/
-    bookmarks.sqlite           # Edit this private local database
-  webstack.generated.yml       # Generated navigation; do not edit
-  source/
-    index.html                 # Homepage front matter
-    images/                    # Your local bookmark images
-  node_modules/hexo-theme-webstack-next/  # Installed theme and generic sample
-  public/                      # Generated static site; no private database
-```
-
-### Sample schema
-
-`categories`:
-
-| Field | Meaning |
-| --- | --- |
-| `id` | Positive integer primary key; omit it on insertion to let SQLite allocate one. |
-| `parent_id` | `NULL` for a top-level category; otherwise its parent category's `id`. |
-| `name` | Required category display name. |
-| `icon` | Font Awesome 5 classes, such as `fas fa-tools`; defaults to `fas fa-folder`. |
-| `sort_order` | Integer, ascending; defaults to 0. Equal values are ordered by `id`. |
-| `enabled` | 1 to display (default), 0 to hide. A hidden parent hides its descendants. |
-
-`bookmarks`:
-
-| Field | Meaning |
-| --- | --- |
-| `id` | Positive integer primary key; can be allocated by SQLite. |
-| `category_id` | Required ID of the category containing this bookmark. |
-| `name`, `url` | Required display name and destination. |
-| `img` | Image URL or site path; defaults to `/images/favicon.png`. |
-| `description` | Description text; defaults to an empty string. |
-| `tags` | Optional tag text; defaults to an empty string. Exported when nonempty. |
-| `sort_order`, `enabled` | Same sorting and visibility rules as categories. |
-
-SQLite can allocate IDs for new rows. Categories support two levels; parent categories with children cannot contain bookmarks. Sort order is ascending, with ID as the tie breaker. Disabling a parent hides its descendants. Move/delete references before deleting a category. Orphans, cycles and deeper trees are rejected even for disabled rows. List keys are generated as `sqlite_category_<id>`. URLs support HTTP(S), FTP, mailto, local paths and anchors; encode spaces. Local images belong in `source/images/`. Tags are retained in YAML but the current cards do not display or filter them.
-
-For example, this transaction adds a top-level category and a bookmark to the **new sample schema** (it is not SQL for the legacy schema):
-
-```sql
-PRAGMA foreign_keys = ON;
-BEGIN;
-INSERT INTO categories (name, icon, sort_order)
-VALUES ('Documentation', 'fas fa-book', 30);
-INSERT INTO bookmarks (category_id, name, url, img, description, tags, sort_order)
-VALUES (last_insert_rowid(), 'SQLite', 'https://sqlite.org/',
-        '/images/favicon.png', 'SQLite documentation', 'database,docs', 10);
-COMMIT;
-```
-
-### Existing Bookmark.db compatibility
-
-The exporter also reads `category(category, key, favicon_code_fa, favicon_code_iconfont)` and `bookmark(bk_id, name, category, tags, url, favicon_url, description)` without changing their schema. It joins on category name, uses `sqlite_<key>` as the list key, maps `favicon_url` to `img`, and retains tags/string bookmark IDs in the database. Category keys must be unique and contain only letters, digits, underscores or hyphens. FA6 style prefixes and the tools/reader icon names are mapped to bundled FA5 equivalents; iconfont fonts are not loaded automatically.
-
-This legacy format keeps a flat hierarchy and database row order; it has no sorting/enabled fields. Other tables such as `ToDo` and `readlater` stay private in the copy and are not exported.
-
-Database paths must stay in `.webstack/`, outside source/public directories (including directory links). The directory and SQLite sidecar files are Git-ignored; none are published to `public/`. Public bookmark YAML can be backed up or reused in YAML mode. Cloud CI without the local database must be supplied with public navigation YAML and use YAML mode; missing databases never silently fall back to stale output. Set `enable: false` to return to the original YAML navigation.
-
-### How automatic bookmark updates work
-
-The theme uses Hexo's extension points, not an external shell command that users must run before previewing:
-
-1. Hexo loads [scripts/bookmarks.js](scripts/bookmarks.js) from the active theme. It calls the registration function in [lib/bookmark-hexo.cjs](lib/bookmark-hexo.cjs).
-2. `hexo.extend.console.register('bookmarks', ...)` registers the custom CLI command. `init` prepares a sample/imported database, `export` converts SQLite to YAML, and `export-db` converts the current YAML configuration to SQLite. These commands do not render pages.
-3. `hexo.extend.filter.register('before_generate', ...)` registers the automatic export. The [before_generate filter](https://hexo.io/api/filter.html#before-generate) executes before page generation, including the first generation performed by normal `hexo s` startup.
-4. When `bookmark_db.enable` is true, the filter reads and validates the database in a read-only transaction, checks for conflicting site data, and atomically updates `webstack.generated.yml` if the content changed.
-5. It also applies the **same navigation object** to `hexo.theme.config` with `Object.assign`. Hexo renders the current pages from that in-memory configuration immediately. The exported YAML is not automatically loaded as a second theme configuration file, and rendering does not depend on Hexo detecting a YAML file change.
-
-```text
-hexo s startup / hexo g
-  -> Hexo loads site and theme data
-  -> generateBefore event (existing legacy configuration support)
-  -> before_generate filter
-     -> read SQLite -> validate navigation
-     -> write webstack.generated.yml
-     -> apply navigation to hexo.theme.config
-  -> generate routes -> render pages
-```
-
-The `generateBefore` event in [scripts/replace_config.js](scripts/replace_config.js) supports the older `source/_data/webstack-next.yml` configuration. In the tested Hexo version it runs before `before_generate`, so the SQLite navigation is applied after that legacy configuration replacement. The filter is part of Hexo's awaited generation pipeline: an export error rejects generation rather than allowing deployment to proceed with stale data.
-
-Deployment needs one extra integration. Plain `hexo d` can reuse an existing `public/` directory without generating anything. The theme uses `after_init` to wrap the registered `generate` and `deploy` console handlers while retaining their options. With SQLite enabled, direct deployment requests generation first. A generation-depth counter recognizes `hexo g -d`, so its deployment phase does not generate again. Updating YAML only in the `deployBefore` event would be too late to refresh already generated HTML.
-
-There is **no SQLite file watcher or browser-side database connection**. The filter runs whenever Hexo generates, but changing only a file in `.webstack/` does not request a new generation. Restart the preview after editing the database. Normal server routes are rendered for preview; `hexo g` writes deployable files, and static server mode serves those existing files as described in the [Hexo server documentation](https://hexo.io/docs/server.html).
-
-### Troubleshooting
-
-| Symptom | What to check |
-| --- | --- |
-| `Console bookmarks has not been registered` | Run inside the Hexo site, activate `theme: webstack-next`, update the theme, and check startup logs for script/dependency errors. Do not use `--safe`, which disables scripts. |
-| SQLite requires a newer Node.js | Check `node --version` in the same terminal. Use Node.js 22.13+ or leave SQLite mode disabled. |
-| Database already exists | Initialization is a one-time action. Edit the existing copy, or choose a new `.webstack/` path to import another database. |
-| Bookmark database missing | Initialize it first and check `bookmark_db.path`, relative to the site root. A copy of only the theme repository does not include your personal database. |
-| Edits do not appear | Save/commit the database editor's transaction, edit the private copy rather than the import source, and restart `hexo s`. For static server mode, run `hexo g` first. |
-| Category/data conflict | Resolve orphan/deep/mixed category references, or rename/remove the conflicting `source/_data/` list identified in the error. |
-| Database is locked | Finish the editor's write transaction and retry. The reader waits up to three seconds; it cannot read unsaved changes. |
-| Refusing to overwrite generated YAML | The existing `webstack.generated.yml` lacks the generator's ownership header. Back it up under another filename before exporting. |
-| `hexo d` does not publish | Configure the site's `deploy` section and install its matching deployer. The theme prepares current pages; the deployer performs publication. |
+Put your own images in `source/images/` and reference them as `/images/name.png`. Paths are case-sensitive, including on Windows when the site is later built on Linux.
 
 ## Theme settings
 
-The complete defaults are in [_config.example.yml](_config.example.yml). Keep the `css` and `js` mappings when creating your configuration.
+The complete set of defaults is in [`_config.example.yml`](_config.example.yml). Keep the `css` and `js` mappings when you edit your copy; the template loads these files directly.
 
-| Setting | Purpose |
-| --- | --- |
-| `favicon`, `banner` | Site icon and social sharing image. |
-| `logo.expanded`, `logo.collapsed` | Sidebar logos. The legacy `logo.dark` key is retained for existing configurations; the current about page uses `logo.expanded`. |
-| `flag` | Language links with `name`, `icon`, `index`, and `default`. These are links, not automatic translation. Bundled icons are `flag-cn` and `flag-us`. |
-| `search` | Show or hide the search box. |
-| `userDefinedSearchData` | Search providers; example below. |
-| `githubCorner` | HTML for the top corner link; defaults to this fork. Use `''` to hide it. |
-| `menu`, `expandAll` | Sidebar categories and whether submenus start expanded. |
-| `bookmark_db` | Optional local SQLite navigation source, disabled by default; see above. |
-| `since` | Your site's founding year; replace the example value. |
-| `about`, `aboutPage` | About link and content; creating the page is a separate step. |
-| `busuanzi` | Optional third-party visit statistics, disabled by default. Use `position: sidebar` or `footer`; `$pv` / `$uv` are count placeholders. |
-| `custom.head`, `custom.body` | Trusted HTML inserted into the page head or before `</body>`. |
-| `css`, `js` | Asset URLs. `css.hclonely` and `/css/hclonely.css` retain their upstream names for compatibility. |
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `favicon` | `/images/favicon.png` | Browser tab icon. |
+| `banner` | `/images/webstack_banner_cn.png` | Image used when the site is shared. |
+| `logo.expanded` | `/images/logo@2x.png` | Sidebar logo at full width. |
+| `logo.collapsed` | `/images/logo-collapsed@2x.png` | Sidebar logo when collapsed. |
+| `logo.dark` | `/images/logo_dark@2x.png` | Legacy key kept for older configurations; the current layout does not read it. |
+| `flag` | Chinese | Language link buttons in the header. `default: true` marks the current one. Bundled icons: `flag-cn`, `flag-us`. |
+| `search` | `true` | Show or hide the search box. |
+| `userDefinedSearchData` | Baidu | Search engines and the default provider; see below. |
+| `githubCorner` | This fork's link | HTML for the top-right corner. Set `''` to hide it. |
+| `menu` | Sample categories | Sidebar structure and bookmark lists. |
+| `expandAll` | `false` | Expand all submenus on load. |
+| `bookmark_db` | Disabled | Optional SQLite bookmark source; see [Bookmarks](#bookmarks-yaml-or-sqlite). |
+| `since` | `2026` | Site founding year shown in the footer. |
+| `about` | `/about/` link | Sidebar link to the about page. Set `about: {}` to hide it. |
+| `aboutPage` | Sample text | Content of the about page. |
+| `busuanzi` | Disabled | Visitor statistics. `position` is `sidebar` or `footer`; `$pv` and `$uv` are placeholders. |
+| `custom.head` | empty | HTML added to `<head>`. |
+| `custom.body` | empty | HTML added before `</body>`. |
+| `css`, `js` | Bundled files | Stylesheet and script URLs. |
 
-A custom search configuration:
+To change the default search engine and suggested providers:
 
 ```yaml
 userDefinedSearchData:
@@ -362,13 +208,137 @@ userDefinedSearchData:
       url: https://www.google.com/search?q=
 ```
 
-`img` is the icon CSS value; `url` is the search URL prefix. Search suggestions, when enabled, use Baidu's suggestion service. Resource lists are configured manually; search opens the selected external provider.
+`img` is the icon CSS value and `url` is the search URL prefix. The search box sends the query to the selected external engine; it does not filter the cards. With `hotStatus: true`, suggestions come from Baidu for every provider, so the browser must be able to reach `sp0.baidu.com`.
 
-Colors, spacing, corners, and shadows are defined by the `--ws-*` variables in `source/css/hclonely.css`; `body.night` contains dark-mode overrides. Additional styles can be loaded through `custom.head`.
+For colours, spacing, corners and shadows, edit the `--ws-*` custom properties in `source/css/hclonely.css`. Dark mode overrides live under `body.night`. If you would rather not edit theme files, load extra CSS through `custom.head`.
 
-## About and child pages
+## Bookmarks: YAML or SQLite
 
-To enable the default `/about/` link, create `source/about/index.html`:
+Bookmarks live in YAML by default: the `menu` and list entries in `_config.webstack-next.yml`, plus optional files in `source/_data/`. That is enough for a few dozen links and keeps everything in one place.
+
+For hundreds of links, or if you prefer a database editor, enable SQLite mode. The database stays on your computer, the published site is still static, and the YAML settings for appearance remain untouched.
+
+### 1. Convert your existing YAML bookmarks
+
+```shell
+hexo bookmarks export-db
+```
+
+This reads the homepage `menu` and every referenced list (inline or in `source/_data/`) and writes `.webstack/bookmarks.sqlite`. Category order, icons and hierarchy, bookmark order, names, links, images, descriptions and tags are preserved. It does not modify your YAML files, does not enable SQLite, and does not generate pages.
+
+An existing database is never overwritten. To write somewhere else:
+
+```shell
+hexo bookmarks export-db --output .webstack/current-bookmarks.sqlite
+```
+
+Then set `bookmark_db.path` to that file. The output must stay inside `.webstack/`; the command refuses paths in `source/` or `public/`.
+
+`export-db` converts homepage navigation only. Lists defined in child page front matter are not merged into this database. To back up a database that is already in use, use your SQLite tool's backup or export feature.
+
+### 2. Enable the database
+
+Add the following to `_config.webstack-next.yml`:
+
+```yaml
+bookmark_db:
+  enable: true
+  path: .webstack/bookmarks.sqlite
+```
+
+The path is relative to the site root and must stay inside `.webstack/`. While the database is enabled, it replaces the navigation used for rendering. Your colours, logos, about page and other settings keep coming from the configuration file.
+
+If you have no bookmarks yet, create a sample database instead of exporting:
+
+```shell
+hexo bookmarks init
+```
+
+To start from an existing Bookmark.db (the format used by the original WebStack project):
+
+```shell
+hexo bookmarks init --from "D:/path/to/Bookmark.db"
+```
+
+Initialization copies a consistent snapshot of the source and leaves it untouched. It refuses to overwrite an existing database and adds `/.webstack/` to the site's `.gitignore`.
+
+### 3. Edit and publish
+
+Open `.webstack/bookmarks.sqlite` in any SQLite editor, edit the `categories` and `bookmarks` tables, and commit the transaction. Then:
+
+- Restart `hexo s` to preview. There is no file watcher for the database.
+- Run `hexo g` to build, or `hexo d` to build and deploy.
+
+The theme exports the database to `webstack.generated.yml` before each generation, then renders from that data. Do not edit `webstack.generated.yml`; it is overwritten. Also keep the database out of `source/` and `public/`: the theme enforces this.
+
+### Database schema
+
+The database uses schema version 1.
+
+`categories`:
+
+| Column | Meaning |
+| --- | --- |
+| `id` | Integer primary key. Omit it on insert to let SQLite assign one. |
+| `parent_id` | `NULL` for a top-level category, otherwise the parent's `id`. |
+| `name` | Display name. |
+| `icon` | Font Awesome 5 classes, for example `fas fa-tools`. Defaults to `fas fa-folder`. |
+| `sort_order` | Integer, ascending. Equal values fall back to `id`. |
+| `enabled` | `1` to show, `0` to hide. A hidden parent hides its children. |
+
+`bookmarks`:
+
+| Column | Meaning |
+| --- | --- |
+| `id` | Integer primary key. Can be assigned by SQLite. |
+| `category_id` | Category that contains the bookmark. |
+| `name`, `url` | Display name and destination. |
+| `img` | Image URL or site path. Defaults to `/images/favicon.png`. |
+| `description` | Description text. Defaults to empty. |
+| `tags` | Optional tag text. Defaults to empty. |
+| `sort_order`, `enabled` | Same rules as categories. |
+
+Categories support two levels. A parent category with children cannot contain bookmarks directly. Deleting a category requires moving or deleting its bookmarks first. Orphaned, cyclic and deeper-than-two-level structures are rejected, including when `enabled` is `0`.
+
+The theme turns each category into a list key such as `sqlite_category_1`, so your existing named YAML lists can stay as backups.
+
+Adding a category and a bookmark:
+
+```sql
+PRAGMA foreign_keys = ON;
+BEGIN;
+INSERT INTO categories (name, icon, sort_order)
+VALUES ('Documentation', 'fas fa-book', 30);
+INSERT INTO bookmarks (category_id, name, url, img, description, tags, sort_order)
+VALUES (last_insert_rowid(), 'SQLite', 'https://sqlite.org/',
+        '/images/favicon.png', 'SQLite documentation', 'database,docs', 10);
+COMMIT;
+```
+
+### Command reference
+
+Run these in the Hexo site root with the theme active. `hexo bookmarks` is a command provided by the theme, not a Hexo built-in.
+
+| Command | What it does |
+| --- | --- |
+| `hexo bookmarks init` | Creates `.webstack/bookmarks.sqlite` from the bundled sample. |
+| `hexo bookmarks init --from <path>` | Copies an existing Bookmark.db into the private directory without changing the source. |
+| `hexo bookmarks export-db` | Converts the current YAML navigation into a new database. |
+| `hexo bookmarks export-db --output <path>` | Writes the conversion to a different file inside `.webstack/`. |
+| `hexo bookmarks export` | Writes the current database to `webstack.generated.yml` without generating pages. |
+
+`hexo s`, `hexo g` and `hexo d` refresh the generated navigation automatically when the database is enabled. `hexo s --static` serves the existing `public/` folder, so run `hexo g` first if you changed bookmarks.
+
+### Notes and limits
+
+- The database, its WAL/journal files and `webstack.generated.yml` are local working files. `.webstack/` is added to `.gitignore` and nothing from it is published.
+- A CI build without the database cannot render SQLite bookmarks. Either commit the generated navigation as YAML and disable SQLite there, or provide the database in the CI environment.
+- The legacy `Bookmark.db` schema (`category` and `bookmark` tables) is also read directly. Its icons are mapped to Font Awesome 5; iconfont fonts are not loaded.
+- To return to YAML bookmarks, set `bookmark_db.enable: false`. The generated YAML is then ignored.
+
+## About page and child pages
+
+Create `source/about/index.html` to enable the sidebar's about link:
 
 ```yaml
 ---
@@ -378,9 +348,9 @@ title: About
 ---
 ```
 
-Edit `aboutPage.website` and `aboutPage.webmaster` in `_config.webstack-next.yml`. Replace the sample name, profile link, image, description, and HTML with your own. If you do not need this page, set `about: {}` to hide its sidebar link.
+Edit `aboutPage.website` and `aboutPage.webmaster` in `_config.webstack-next.yml` to replace the sample text. If you do not want the page, set `about: {}`.
 
-To create `/child/`, create `source/child/index.html`:
+Child pages let you publish extra directories that reuse the card layout. Create `source/child/index.html`:
 
 ```yaml
 ---
@@ -399,57 +369,87 @@ childTools:
 ---
 ```
 
-Child pages inherit theme settings and may override them in front matter. A child page can also load route-specific data: for `/child/` and `config: childTools`, use `source/_data/child/childTools.yml`. See the working [child page](dev/source/child/index.html) and [about page](dev/source/about/index.html). `title` is the current spelling; the historical `tittle` alias is still accepted when `title` is absent.
+A child page inherits the theme settings and may override them in its front matter. Its lists can also live in `source/_data/child/childTools.yml`. See the working examples in [`dev/source/child/index.html`](dev/source/child/index.html) and [`dev/source/about/index.html`](dev/source/about/index.html).
 
-## Update or switch from upstream
+## Update the theme
 
-Keep your site configuration and content outside the installed theme directory. Review the new example configuration for added keys without overwriting your own settings.
+Your configuration and content live in the site root, so updating the theme does not touch them. Never edit files inside `themes/webstack-next` or `node_modules/hexo-theme-webstack-next`; changes there are lost on the next update.
 
-For local installations, pack the current development tree and install the resulting archive when updating. This refreshes the installed files even when the package version has not changed:
-
-```shell
-# Run in the development theme directory:
-npm pack
-# Run in the Hexo site directory, using the archive filename printed above:
-npm install "D:/path/to/hexo-theme-webstack/hexo-theme-webstack-next-3.0.5-freedomgod.2.tgz" --registry=https://registry.npmjs.org
-hexo clean
-hexo s
-```
-
-For an existing Git installation from this fork:
+### Git installation
 
 ```shell
 git -C themes/webstack-next pull --ff-only
-npm install js-yaml --save
 hexo clean
-hexo generate
 ```
 
-The names are independent, so the upstream theme does not need to be removed. Local npm installation imports old settings on first install; switching back uses the untouched original settings. For Git installs, copy the old config to `_config.webstack-next.yml` yourself. Review site placeholders and custom template changes separately; existing new-theme config files are never overwritten by updates.
+Run `npm install` in the site root if the update adds or changes dependencies. Compare your `_config.webstack-next.yml` with the new `_config.example.yml` for new settings.
 
-## Develop this theme
+### Local npm installation
 
-Run these commands in the **theme repository root**:
+Reinstall from the checkout:
+
+```shell
+npm install --install-links "D:/path/to/hexo-theme-webstack" --registry=https://registry.npmjs.org
+hexo clean
+```
+
+npm may reuse a cached copy when the package version has not changed, leaving old files such as `lib/bookmark-hexo.cjs` in place. If a command or a fix seems missing after reinstalling, build a tarball and install that instead:
+
+```shell
+# In the theme checkout:
+npm pack
+# In the Hexo site:
+npm install "D:/path/to/hexo-theme-webstack/hexo-theme-webstack-next-<version>.tgz"
+hexo clean
+```
+
+Check the installed version with:
+
+```shell
+node -e "console.log(require('hexo-theme-webstack-next/package.json').version)"
+```
+
+## Troubleshooting
+
+| Symptom | Fix |
+| --- | --- |
+| `Console bookmarks has not been registered` | Run the command in the site root, make sure `theme: webstack-next` is active, and do not use `--safe`, which skips theme scripts. |
+| `hexo bookmarks export-db` prints `Usage: hexo bookmarks <init\|export>` | The installed copy predates the `export-db` command. Update the theme (see above) and run it again. |
+| `SQLite bookmarks require Node.js 22.13+` | Check `node --version` in the same terminal, or leave SQLite mode disabled. |
+| `Bookmark database already exists` | Initialization runs once. Edit the existing database, or choose a new path under `.webstack/`. |
+| `Bookmark database missing` | Run `hexo bookmarks init` or `export-db`, and check that `bookmark_db.path` is correct and relative to the site root. |
+| Bookmark edits do not appear | Commit the editor's transaction, edit the private copy (not an import source), and restart `hexo s`. For `hexo s --static`, run `hexo g` first. |
+| `The bookmark database must be inside the private .webstack/ directory` | Move the file into `.webstack/`. Paths in `source/` and `public/` are rejected on purpose. |
+| Database is locked | Finish the write transaction in your editor. The theme waits up to three seconds and cannot read uncommitted changes. |
+| Category/data conflict | The error names the conflicting `source/_data/` file. Rename or remove it, or fix the category references. |
+| Refusing to overwrite `webstack.generated.yml` | The file was created by hand. Move it aside, or keep manual navigation in YAML mode. |
+| Images do not load | Put them in `source/images/`, reference them as `/images/name.png`, and match the case of the file name. |
+| Cards are missing on the homepage | Add `__index: true` to the homepage front matter, or use a page generated by `hexo-generator-index`. |
+| `hexo d` publishes nothing | Configure `deploy` in `_config.yml` and install the matching deployer package. The theme only prepares the files. |
+
+## Development
+
+These commands run in the theme checkout, not in a site.
 
 ```shell
 npm ci
 npm run dev
 ```
 
-Visit <http://localhost:4000>, <http://localhost:4000/about/>, and <http://localhost:4000/child/>. The development site uses [dev/_config.yml](dev/_config.yml), [dev/source](dev/source), and `_config.example.yml`. Restart after changing configuration. Theme templates and assets are linked directly into the generated development site.
+`npm run dev` starts a Hexo development site at <http://localhost:4000> with three pages: the homepage, `/about/` and `/child/`. It uses [`dev/_config.yml`](dev/_config.yml), `dev/source` and `_config.example.yml`; restart after changing configuration.
 
 ```shell
-npm run build
-npm test
+npm run build   # generate the development site
+npm test        # install check + bookmark and installer tests
 ```
 
-The build checks the three example pages using Hexo 8.1.2. Tests build an independent copied-theme site and check SQLite initialization, legacy imports, validation, server startup and deployment refresh. The complete test suite requires Node.js 22.13+. Run `npm run bookmarks:sample` to rebuild the generic database from SQL. Generated files live in `.hexo-dev/` and `output/` and are excluded from Git and packaging. CI runs both checks on Windows and Linux with Node.js 22 and 24.
+Tests build a copied-theme site and cover SQLite initialization, legacy imports, validation, server startup and deployment refresh. They require Node.js 22.13 or newer. Run `npm run bookmarks:sample` to rebuild [`examples/bookmarks.sqlite`](examples/bookmarks.sqlite) from [`examples/bookmarks.sql`](examples/bookmarks.sql). Generated files go to `.hexo-dev/` and `output/`, which are excluded from Git and from the npm package.
 
-## Credits and support
+## Credits and license
 
 - Fork maintenance: [freedomgod](https://github.com/freedomgod/hexo-theme-webstack).
-- Original Hexo theme: [HCLonely](https://github.com/HCLonely/hexo-theme-webstack).
-- Original WebStack design: [WebStackPage / Viggo](https://github.com/WebStackPage/WebStackPage.github.io).
+- Original theme: [HCLonely/hexo-theme-webstack](https://github.com/HCLonely/hexo-theme-webstack).
+- Original design: [WebStackPage / Viggo](https://github.com/WebStackPage/WebStackPage.github.io).
 - Static site framework: [Hexo](https://hexo.io/).
 
-The maintenance entry point is [this repository](https://github.com/freedomgod/hexo-theme-webstack). Once the maintainer enables Issues under Settings → General → Features, use its Issues tab for fork-specific reports. Licensed under [MIT](LICENSE); original copyright notices and bundled third-party notices remain intact. The included WebStack logos are inherited sample assets; replace them for your own site.
+Report fork-specific problems in [this repository's Issues](https://github.com/freedomgod/hexo-theme-webstack/issues). The theme is released under the [MIT license](LICENSE); original copyright and third-party notices are preserved. The bundled WebStack logos and sample images are placeholders for your own branding.
