@@ -124,9 +124,10 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 }
 .user-info-navbar .user-info-menu > li a[data-toggle=sidebar] { padding: 0 14px; }
 .user-info-navbar .user-info-menu > li > a:hover, .mode-toggle:hover { color: var(--ws-accent); background: var(--ws-accent-soft); }
+.user-info-navbar .user-info-menu > li > a:focus-visible, .mode-toggle:focus-visible { color: var(--ws-accent); outline-offset: 2px; }
 .mode-toggle svg { width: 21px; height: 21px; }
 .mode-toggle path { fill: currentColor; }
-.mode-toggle[aria-pressed='true'] { color: var(--ws-accent); background: var(--ws-accent-soft); border-color: var(--ws-border); }
+/* Night mode is evident from the page; a persistent pressed fill reads as hover. */
 .user-info-navbar .user-info-menu > li .dropdown-menu.languages,
 .dropdown-menu { background: var(--ws-surface); border: 1px solid var(--ws-border); border-radius: var(--ws-radius-sm); box-shadow: var(--ws-shadow-hover); }
 .user-info-navbar .user-info-menu > li .dropdown-menu.languages li a { color: var(--ws-text); padding: 12px 18px; }
@@ -212,6 +213,13 @@ footer.main-footer .go-up a { display: flex; align-items: center; justify-conten
 footer.main-footer .go-up a:hover { color: var(--ws-on-accent); background: var(--ws-button); border-color: var(--ws-button); }
 .footer-inner #busuanzi_value_site_pv, .footer-inner #busuanzi_value_site_uv { color: var(--ws-accent); }
 @media (min-width: 769px) {
+  /* Anchor the sidebar toggle to the sidebar edge and push preferences to the far right. */
+  .user-info-navbar { padding-left: 10px; }
+  .user-info-navbar .user-info-menu { width: 100%; }
+  /* Xenon's `.user-info-menu > li` margin reset outranks a plain class selector. */
+  .user-info-navbar .user-info-menu > li.language-switcher { margin-left: auto; }
+  /* The fixed GitHub corner would clip the preferences cluster's top-right corner. */
+  body:has(.github-corner) .user-info-navbar { padding-right: calc(var(--ws-gutter) + 56px); }
   .page-container:has(> .sidebar-menu.collapsed) + footer.main-footer { padding-left: calc(80px + var(--ws-gutter)); }
   .sidebar-menu.collapsed { width: 80px; }
   .sidebar-menu.collapsed .logo-env { padding: 24px 0; }

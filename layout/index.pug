@@ -8,9 +8,9 @@ body.page-body
     main#main-content.main-content
       nav.navbar.user-info-navbar(role='navigation')
         ul.user-info-menu.left-links.list-inline.list-unstyled
-          li.hidden-sm.hidden-xs.hover-line
+          li.sidebar-toggle.hidden-sm.hidden-xs.hover-line
             a(href='#' data-toggle='sidebar' aria-label='收起或展开侧边栏' title='收起或展开侧边栏')
-              i.fas.fa-bars
+              i.fas.fa-bars(aria-hidden='true')
 
           li.dropdown.hover-line.language-switcher
             - const defaultFlag = Array.isArray(setting.flag) ? (setting.flag.find(flag => flag.default) || setting.flag[0]) : setting.flag
