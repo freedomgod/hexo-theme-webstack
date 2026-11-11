@@ -201,6 +201,21 @@ blockquote { border-left: 3px solid var(--ws-accent); background: var(--ws-surfa
 .about-page .page-container .main-content { padding-top: 40px; }
 .about-page .resource-card { margin: 16px 0; }
 .about-page .navbar-brand .logo img { max-width: 180px; }
+.about-page .navbar-brand { position: relative; }
+/* Back sits outside the brand box so the fixed 180px logo width can change independently. */
+.about-page .navbar-back {
+  position: absolute; left: calc(100% + 16px); top: 50%; transform: translateY(-50%);
+  display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px;
+  color: #fff; background: transparent; border: 1px solid rgba(255, 255, 255, 0.22); border-radius: var(--ws-radius-sm);
+  font-size: 13px; font-weight: 600; line-height: 1; text-decoration: none; white-space: nowrap;
+  transition: background var(--ws-duration), border-color var(--ws-duration);
+}
+.about-page .navbar-back:hover { color: #fff; background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.38); text-decoration: none; }
+/* The global focus ring uses the light accent; the navbar stays dark in both themes. */
+.about-page .navbar a:focus-visible { outline-color: var(--ws-sidebar-accent) !important; outline-offset: 2px; }
+/* Xenon sets `display: table-cell` on brand links; absolute positioning then blockifies it. */
+.about-page .navbar.horizontal-menu .navbar-inner .navbar-brand > a.navbar-back { display: inline-flex; }
+.about-page .navbar-back i { font-size: 14px; }
 footer.main-footer { margin: 0; padding: 28px var(--ws-gutter) 28px calc(var(--ws-sidebar-width) + var(--ws-gutter)); border-top: 1px solid var(--ws-border); background: var(--ws-bg); color: var(--ws-muted); font-size: 12px; line-height: 1.9; }
 footer.main-footer .footer-inner { max-width: none; }
 footer.main-footer p { margin: 0; }
@@ -271,6 +286,11 @@ footer.main-footer .go-up a:hover { color: var(--ws-on-accent); background: var(
   .about-page .page-container .main-content { padding-top: 24px; }
   footer.main-footer { padding: 24px 72px 24px 20px; }
   footer.main-footer .go-up { right: 16px; bottom: 16px; }
+}
+@media (max-width: 360px) {
+  /* On the narrowest phones the corner badge covers the back button. */
+  .about-page .github-corner { display: none; }
+  .about-page .navbar-back { left: calc(100% + 10px); padding: 0 12px; }
 }
 @media (max-width: 540px) {
   .resource-grid { grid-template-columns: minmax(0, 1fr); }
