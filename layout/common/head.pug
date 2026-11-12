@@ -12,6 +12,18 @@ link(rel="shortcut icon" href=url_for(setting.favicon))
 //- Shared theme styles follow vendor styles; custom.head can override them.
 != css(Object.entries(setting.css).filter(([key]) => key !== 'hclonely').map(([, value]) => value))
 != css(setting.css.hclonely || '/css/hclonely.css')
+
+//- Apply the saved card appearance before first paint to avoid a flash.
+script.
+  (function () {
+    try {
+      var style = localStorage.getItem('webstack.cardStyle');
+      var size = localStorage.getItem('webstack.cardSize');
+      if (['elevated', 'outline', 'soft'].indexOf(style) !== -1) document.documentElement.setAttribute('data-card-style', style);
+      if (['compact', 'standard', 'large'].indexOf(size) !== -1) document.documentElement.setAttribute('data-card-size', size);
+    } catch (error) {}
+  })();
+
 != js(setting.js.jquery)
 
 script.

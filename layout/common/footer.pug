@@ -38,6 +38,7 @@ if setting.busuanzi && setting.busuanzi.enable
 
 if page.type !== "about"
   script(src=url_for(setting.js.lozad))
+  script(src=url_for('/js/card-prefs.js'))
 
 if setting.js && setting.js.footer
   script(src=url_for(setting.js.footer))

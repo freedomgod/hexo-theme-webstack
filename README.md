@@ -12,6 +12,7 @@ It is a fork of [HCLonely/hexo-theme-webstack](https://github.com/HCLonely/hexo-
 
 - Responsive card grid with a collapsible sidebar, category icons and two levels of categories.
 - Light and dark appearance, with a switch in the header.
+- Three card styles (elevated, outline, soft) and three sizes (compact, standard, large), switchable in the header and saved in the browser.
 - Search box that opens your preferred external search engine, with configurable providers and optional hot-keyword suggestions.
 - Keyboard navigation for the sidebar, search box and resource cards.
 - Optional SQLite bookmark database, edited with any SQLite tool and exported during `hexo s`, `hexo g` and `hexo d`.

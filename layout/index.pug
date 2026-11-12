@@ -31,6 +31,44 @@ body.page-body
                     img(src=url_for('images/flags/' + defaultFlag.icon + '.png') alt=defaultFlag.icon)
                     = ' ' + defaultFlag.name
 
+          li.card-pref.hover-line
+            button.card-pref-toggle(type='button' aria-label='调整书签卡片样式和大小' title='卡片外观' aria-expanded='false' aria-controls='card-prefs' aria-haspopup='dialog')
+              i.fas.fa-th-large(aria-hidden='true')
+            .card-prefs#card-prefs(role='dialog' aria-modal='false' aria-labelledby='card-prefs-title' hidden)
+              .card-prefs-head
+                strong#card-prefs-title 卡片外观
+                button.card-prefs-close(type='button' aria-label='关闭卡片设置')
+                  i.fas.fa-times(aria-hidden='true')
+              .card-prefs-group(role='group' aria-labelledby='card-prefs-style')
+                span#card-prefs-style.card-prefs-label 样式
+                .card-prefs-options
+                  button.card-prefs-option(type='button' data-card-style='elevated' aria-pressed='true' title='浮起：白底、细边与轻阴影')
+                    span.card-prefs-preview(aria-hidden='true')
+                    span 浮起
+                  button.card-prefs-option(type='button' data-card-style='outline' aria-pressed='false' title='描边：透明底、清晰描边、无阴影')
+                    span.card-prefs-preview.card-prefs-preview--outline(aria-hidden='true')
+                    span 描边
+                  button.card-prefs-option(type='button' data-card-style='soft' aria-pressed='false' title='柔和：浅灰底、无边框、低对比')
+                    span.card-prefs-preview.card-prefs-preview--soft(aria-hidden='true')
+                    span 柔和
+              .card-prefs-group(role='group' aria-labelledby='card-prefs-size')
+                span#card-prefs-size.card-prefs-label 大小
+                .card-prefs-options
+                  button.card-prefs-option(type='button' data-card-size='compact' aria-pressed='false' title='紧凑：更小的卡片，每行显示更多')
+                    span.card-prefs-size-preview(aria-hidden='true')
+                    span 紧凑
+                  button.card-prefs-option(type='button' data-card-size='standard' aria-pressed='true' title='标准：当前尺寸')
+                    span.card-prefs-size-preview(aria-hidden='true')
+                    span 标准
+                  button.card-prefs-option(type='button' data-card-size='large' aria-pressed='false' title='宽松：更大的图标、字号和留白')
+                    span.card-prefs-size-preview(aria-hidden='true')
+                    span 宽松
+              .card-prefs-foot
+                span 设置保存在此浏览器
+                button.card-prefs-reset(type='button') 恢复默认
+            .card-prefs-scrim(hidden)
+            p.sr-only#card-prefs-status(role='status' aria-live='polite')
+
           li.switch-mode.hover-line
             button.mode-toggle(type='button' onclick='switchNightMode()' aria-label='切换深浅色模式' title='切换深浅色模式')
               svg.icon(t='1593061068148' viewBox='0 0 1024 1024' version='1.1' xmlns='http://www.w3.org/2000/svg' p-id='1681' width='16' height='16')
