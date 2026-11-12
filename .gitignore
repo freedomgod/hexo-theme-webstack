@@ -7,3 +7,6 @@ output/
 .webstack/
 examples/*.tmp
 *.tgz
+
+# Local plan/design notes: background reading for maintainers, not part of the theme.
+docs/superpowers/
