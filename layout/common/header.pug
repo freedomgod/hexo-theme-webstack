@@ -1,3 +1,21 @@
+//- Split counters into label/value so long numbers keep one row (see .busuanzi-metric).
+mixin busuanziStat(kind, icon, text)
+  - const token = '$' + kind
+  - const source = String(text)
+  - const index = source.toLowerCase().indexOf(token)
+  li
+    a.busuanzi-link(href='javascript:void(0)')
+      i(class=icon)
+      span.busuanzi-metric(id='busuanzi_container_site_' + kind)
+        if index === -1
+          = source
+        else
+          span.busuanzi-label= source.slice(0, index)
+          span.busuanzi-count
+            span.busuanzi-value(id='busuanzi_value_site_' + kind)
+            if source.slice(index + token.length)
+              span.busuanzi-suffix= source.slice(index + token.length)
+
 a.skip-link(href='#main-content') 跳到主要内容
 .sidebar-menu.toggle-others.fixed
   .sidebar-menu-inner
@@ -35,11 +53,5 @@ a.skip-link(href='#main-content') 跳到主要内容
             i(class=setting.about.icon)
             span.tooltip-blue= setting.about.name
       if setting.busuanzi && setting.busuanzi.enable && setting.busuanzi.position === 'sidebar'
-        li
-          a(href='javascript:void(0)')
-            i.fas.fa-eye
-            span#busuanzi_container_site_pv!= setting.busuanzi.pv.replace(/\$pv/i,'<span id="busuanzi_value_site_pv"></span>')
-        li
-          a(href='javascript:void(0)')
-            i.fas.fa-users
-            span#busuanzi_container_site_uv!= setting.busuanzi.uv.replace(/\$uv/i,'<span id="busuanzi_value_site_uv"></span>')
+        +busuanziStat('pv', 'fas fa-eye', setting.busuanzi.pv)
+        +busuanziStat('uv', 'fas fa-users', setting.busuanzi.uv)

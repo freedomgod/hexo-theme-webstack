@@ -1,10 +1,14 @@
+- const sectionId = menuName.replace(/[\s]+/g, '-')
+- const gridId = sectionId + '-grid'
 section.resource-section(aria-label=menuName)
   .section-heading
-    h2.text-gray(id=menuName.replace(/[\s]+/g, '-'))
-      i.linecons-tag(aria-hidden='true')
-      = menuName
+    h2.text-gray(id=sectionId)
+      button.section-toggle(type='button' aria-expanded='true' aria-controls=gridId title='收起或展开「' + menuName + '」')
+        i.linecons-tag(aria-hidden='true')
+        span.section-title= menuName
+        i.fas.fa-chevron-down.section-chevron(aria-hidden='true')
     span.section-count(aria-label=menus.length + ' 个网站')= menus.length
-  .resource-grid
+  .resource-grid(id=gridId)
     each menu in menus
       a.resource-card(href=url_for(menu.url) target='_blank' rel='noopener noreferrer' title=menu.name + ' · ' + menu.description)
         span.resource-icon

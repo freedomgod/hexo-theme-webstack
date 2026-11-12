@@ -139,7 +139,22 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .sidebar-menu .submit-tag { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--ws-sidebar-hover); }
 .sidebar-menu.collapsed .main-menu > li > ul { background: var(--ws-sidebar); border-radius: var(--ws-radius-sm); padding: 8px; box-shadow: var(--ws-shadow-hover); }
 .sidebar-menu.collapsed .main-menu > li.active, .sidebar-menu.collapsed .main-menu > li li.active { background: transparent; }
-.main-menu #busuanzi_value_site_pv, .main-menu #busuanzi_value_site_uv { float: right; }
+/* Busuanzi counters stay on one row: the label may ellipsize, the number never wraps. */
+.sidebar-menu .main-menu a.busuanzi-link { display: flex; align-items: center; gap: 10px; padding-right: 12px; padding-left: 12px; }
+.sidebar-menu .main-menu a.busuanzi-link > i { flex: 0 0 auto; margin-right: 0; }
+/* Busuanzi sets an inline `display` on this node when it shows its data; keep the flex layout. */
+.sidebar-menu .main-menu .busuanzi-metric { display: flex !important; flex: 1 1 auto; align-items: baseline; gap: 6px; min-width: 0; }
+/* Before the API answers (or if it is blocked) the span is empty; hide the whole stat row. */
+.sidebar-menu .main-menu > li:has(.busuanzi-metric .busuanzi-value:empty) { display: none !important; }
+.sidebar-menu .main-menu .busuanzi-label { flex: 0 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sidebar-menu .main-menu .busuanzi-count { display: flex; flex: 0 0 auto; align-items: baseline; gap: 4px; min-width: 0; margin-left: auto; }
+.sidebar-menu .main-menu .busuanzi-value { flex: 0 0 auto; color: var(--ws-sidebar-accent); font-size: 11px; font-variant-numeric: tabular-nums; line-height: 1.4; white-space: nowrap; }
+.sidebar-menu .main-menu .busuanzi-suffix { flex: 0 0 auto; white-space: nowrap; }
+/* When label and number cannot share a row, stack them deliberately instead of wrapping the value. */
+.sidebar-menu .main-menu .busuanzi-metric.is-stacked { flex-direction: column; align-items: flex-start; gap: 2px; }
+.sidebar-menu .main-menu .busuanzi-metric.is-stacked .busuanzi-label { overflow: visible; white-space: normal; text-overflow: clip; }
+.sidebar-menu .main-menu .busuanzi-metric.is-stacked .busuanzi-count { max-width: 100%; margin-left: 0; }
+.sidebar-menu .main-menu .busuanzi-metric.is-stacked .busuanzi-value { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 /* Quiet utility bar */
 .user-info-navbar {
   min-height: 88px; margin: 0 calc(-1 * var(--ws-gutter)); padding: 20px var(--ws-gutter);
@@ -250,12 +265,22 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   transition: border-color var(--ws-duration), box-shadow var(--ws-duration);
 }
 .search-input::placeholder { color: var(--ws-muted); font-size: 14px; letter-spacing: 0; }
-.search-input:focus { border-color: var(--ws-accent); outline: 2px solid var(--ws-accent-soft); outline-offset: 2px; box-shadow: var(--ws-shadow-hover); }
+.search-input:focus, .search-input:focus-visible {
+  /* The global focus ring draws a second blue border around the field; the accent border is enough. */
+  border-color: var(--ws-accent); outline: none !important; box-shadow: var(--ws-shadow-hover);
+}
 .search-icon { position: absolute; left: 12px; top: 10px; width: 40px; height: 40px; padding: 0; border: 0; border-radius: var(--ws-radius-sm); cursor: pointer; }
 .search-icon::after { content: ''; position: absolute; inset: -2px; }
-.search-btn { position: absolute; top: 8px; right: 8px; width: 48px; height: 44px; padding: 0; border: 0; border-radius: var(--ws-radius-sm); background: var(--ws-button); color: var(--ws-on-accent); font-size: 17px; transition: background var(--ws-duration); }
+/* Pin to both edges and let the margins center it, so later input-height changes keep the icon aligned. */
+.search-btn {
+  position: absolute; top: 0; bottom: 0; right: 8px; margin: auto 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 44px; padding: 0; border: 0; border-radius: var(--ws-radius-sm);
+  background: var(--ws-button); color: var(--ws-on-accent); font-size: 17px; line-height: 1;
+  transition: background var(--ws-duration);
+}
 .search-btn:hover { background: var(--ws-button-hover); }
-.search-btn i { margin: 0; }
+.search-btn i { display: block; margin: 0; line-height: 1; }
 .search-hot-text, .search-engine { position: absolute; z-index: 100; top: 70px; left: 0; width: 100%; background: var(--ws-surface); border: 1px solid var(--ws-border); border-radius: var(--ws-radius); box-shadow: var(--ws-shadow-hover); }
 .search-hot-text ul { margin: 0; padding: 8px; list-style: none; }
 .search-hot-text li { padding: 10px 12px; min-height: 44px; color: var(--ws-text); border-radius: var(--ws-radius-sm); cursor: pointer; }
@@ -279,6 +304,16 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .section-heading::after { content: ''; flex: 1; height: 1px; background: var(--ws-border); margin-left: 4px; }
 .section-heading h2 { display: flex; align-items: center; gap: 10px; margin: 0; color: var(--ws-text); font: 650 18px/1.5 var(--ws-font); scroll-margin-top: 28px; }
 .section-heading h2 i { color: var(--ws-muted); font-size: 18px; }
+.section-toggle {
+  display: flex; align-items: center; gap: 10px;
+  margin: -6px 0; padding: 6px 0; border: 0; background: transparent;
+  color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.section-toggle:hover .section-title { color: var(--ws-accent); }
+.section-heading h2 .section-chevron { margin-left: 2px; font-size: 11px; transition: transform var(--ws-duration), color var(--ws-duration); }
+.section-toggle:hover .section-chevron { color: var(--ws-accent); }
+.section-toggle[aria-expanded='false'] .section-chevron { transform: rotate(-90deg); }
+.resource-grid[hidden] { display: none !important; }
 .section-count { min-width: 26px; padding: 1px 8px; border: 1px solid var(--ws-border); border-radius: 8px; color: var(--ws-muted); font-size: 12px; text-align: center; }
 .resource-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--ws-card-min), 1fr)); gap: var(--ws-card-gap); }
 .resource-card {
@@ -353,6 +388,10 @@ footer.main-footer .go-up a:hover { color: var(--ws-on-accent); background: var(
   .sidebar-menu.collapsed .logo-env .logo { max-width: none; }
   .sidebar-menu.collapsed .main-menu { padding: 0 10px; }
   .sidebar-menu.collapsed .main-menu > li > a { padding: 12px 8px; }
+  /* The counter link keeps its own horizontal padding, so center the icon explicitly in the rail. */
+  .sidebar-menu.collapsed .main-menu > li > a.busuanzi-link { justify-content: center; padding-right: 0; padding-left: 0; }
+  /* The vendor hides menu labels here; our flex counter would otherwise overflow the 80px rail. */
+  .sidebar-menu.collapsed .main-menu > li > a.busuanzi-link > .busuanzi-metric { display: none !important; }
   .sidebar-menu.collapsed .submit-tag { margin-top: 24px; }
 }
 @media (max-width: 1100px) and (min-width: 769px) {
@@ -378,6 +417,8 @@ footer.main-footer .go-up a:hover { color: var(--ws-on-accent); background: var(
   .sidebar-menu.collapsed .main-menu { padding: 0 16px; }
   .sidebar-menu.collapsed .main-menu > li { text-align: left; }
   .sidebar-menu.collapsed .main-menu > li > a > span { display: inline-block !important; }
+  /* Keep the counter's label/value split when the tablet script leaves .collapsed behind. */
+  .sidebar-menu.collapsed .main-menu > li > a.busuanzi-link > span.busuanzi-metric { display: flex !important; }
   .sidebar-menu.collapsed .main-menu > li > a > i { margin-right: 12px; }
   .sidebar-menu.collapsed .main-menu > li.has-sub > a:before { display: inline-block; }
   .sidebar-menu.collapsed .main-menu > li > ul { position: static; width: auto; padding: 4px 0; box-shadow: none; }
