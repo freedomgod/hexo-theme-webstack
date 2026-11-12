@@ -4,7 +4,7 @@ screenshot/
 .npm-cache/
 output/
 .hexo-dev/
-dev/
+dev-site/
 tools/
 docs/superpowers/
 test/

@@ -23,7 +23,7 @@ async function main() {
   const homepage = readme.match(/```yaml\r?\n(---\r?\nlayout: index[\s\S]*?---)\r?\n```/);
   assert(homepage, 'README must include a complete homepage example');
   await fs.writeFile(path.join(base, 'source', 'index.html'), homepage[1]);
-  await fs.copyFile(path.join(root, 'dev', 'source', 'about', 'index.html'), path.join(base, 'source', 'about', 'index.html'));
+  await fs.copyFile(path.join(root, 'dev-site', 'source', 'about', 'index.html'), path.join(base, 'source', 'about', 'index.html'));
   // A child page with no menu overrides must inherit the theme's categories.
   await fs.writeFile(path.join(base, 'source', 'child', 'index.html'), '---\nlayout: page\ntype: child\ntitle: Child resources\n---\n');
   const theme = yaml.load(await fs.readFile(path.join(root, '_config.example.yml'), 'utf8'));

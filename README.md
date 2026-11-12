@@ -370,7 +370,7 @@ childTools:
 ---
 ```
 
-A child page inherits the theme settings and may override them in its front matter. Its lists can also live in `source/_data/child/childTools.yml`. See the working examples in [`dev/source/child/index.html`](dev/source/child/index.html) and [`dev/source/about/index.html`](dev/source/about/index.html).
+A child page inherits the theme settings and may override them in its front matter. Its lists can also live in `source/_data/child/childTools.yml`. See the working examples in [`dev-site/source/child/index.html`](dev-site/source/child/index.html) and [`dev-site/source/about/index.html`](dev-site/source/about/index.html).
 
 ## Update the theme
 
@@ -437,7 +437,7 @@ npm ci
 npm run dev
 ```
 
-`npm run dev` starts a Hexo development site at <http://localhost:4000> with three pages: the homepage, `/about/` and `/child/`. It uses [`dev/_config.yml`](dev/_config.yml), `dev/source` and `_config.example.yml`; restart after changing configuration.
+`npm run dev` starts a Hexo development site at <http://localhost:4000> with three pages: the homepage, `/about/` and `/child/`. It uses [`dev-site/_config.yml`](dev-site/_config.yml), `dev-site/source` and `_config.example.yml`; restart after changing configuration.
 
 ```shell
 npm run build   # generate the development site

@@ -370,7 +370,7 @@ childTools:
 ---
 ```
 
-子页面默认继承主题配置，也可以在 front matter 中覆盖。它的列表同样可以放在 `source/_data/child/childTools.yml`。可运行的示例见 [`dev/source/child/index.html`](dev/source/child/index.html) 和 [`dev/source/about/index.html`](dev/source/about/index.html)。
+子页面默认继承主题配置，也可以在 front matter 中覆盖。它的列表同样可以放在 `source/_data/child/childTools.yml`。可运行的示例见 [`dev-site/source/child/index.html`](dev-site/source/child/index.html) 和 [`dev-site/source/about/index.html`](dev-site/source/about/index.html)。
 
 ## 更新主题
 
@@ -437,7 +437,7 @@ npm ci
 npm run dev
 ```
 
-`npm run dev` 会在 <http://localhost:4000> 启动开发站点，包含三个页面：首页、`/about/` 和 `/child/`。它使用 [`dev/_config.yml`](dev/_config.yml)、`dev/source` 和 `_config.example.yml`；修改配置后需要重启。
+`npm run dev` 会在 <http://localhost:4000> 启动开发站点，包含三个页面：首页、`/about/` 和 `/child/`。它使用 [`dev-site/_config.yml`](dev-site/_config.yml)、`dev-site/source` 和 `_config.example.yml`；修改配置后需要重启。
 
 ```shell
 npm run build   # 生成开发站点

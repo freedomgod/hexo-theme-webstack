@@ -38,9 +38,9 @@ async function main() {
     hexo: { version: require('hexo/package.json').version },
     dependencies: { 'hexo-renderer-pug': '*', 'hexo-server': '*' }
   }, null, 2));
-  await fs.copyFile(path.join(root, 'dev', '_config.yml'), path.join(base, '_config.yml'));
+  await fs.copyFile(path.join(root, 'dev-site', '_config.yml'), path.join(base, '_config.yml'));
   await fs.copyFile(path.join(root, '_config.example.yml'), path.join(base, '_config.webstack-next.yml'));
-  await fs.cp(path.join(root, 'dev', 'source'), path.join(base, 'source'), { recursive: true });
+  await fs.cp(path.join(root, 'dev-site', 'source'), path.join(base, 'source'), { recursive: true });
 
   const hexo = new Hexo(base);
   let failed = false;
