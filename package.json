@@ -1,12 +1,14 @@
 {
   "name": "hexo-theme-webstack-next",
-  "version": "3.0.5-freedomgod.2",
-  "private": true,
+  "version": "3.0.6",
   "description": "WebStack Next: a Hexo navigation theme with local SQLite bookmarks, maintained by freedomgod.",
   "keywords": [
     "hexo",
+    "hexo-theme",
     "theme",
-    "webstack"
+    "webstack",
+    "navigation",
+    "bookmarks"
   ],
   "main": "index.js",
   "engines": {
@@ -20,9 +22,9 @@
     "bookmarks:sample": "node tools/create-bookmark-example.cjs",
     "postinstall": "node ./move_config.js"
   },
-  "author": "HCLonely <h1606051253@gmail.com>",
+  "author": "freedomgod (https://github.com/freedomgod)",
   "contributors": [
-    "freedomgod (https://github.com/freedomgod)"
+    "HCLonely <h1606051253@gmail.com> (https://github.com/HCLonely)"
   ],
   "homepage": "https://github.com/freedomgod/hexo-theme-webstack#readme",
   "license": "MIT",
@@ -32,6 +34,18 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/freedomgod/hexo-theme-webstack.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "hexo": ">=8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "hexo": {
+      "optional": true
+    }
   },
   "dependencies": {
     "hexo-renderer-pug": "^3.0.0",

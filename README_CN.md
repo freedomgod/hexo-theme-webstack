@@ -52,7 +52,20 @@ themes/webstack-next/_config.example.yml  ->  _config.webstack-next.yml
 
 这份配置要留在站点根目录，不要放回 `themes/` 里。以后只改这份副本，不要改主题目录里的样例文件。
 
-### 方式二：用 npm 安装本地目录
+### 方式二：从 npm 安装
+
+主题已发布到 npm，不需要 Git，`themes/` 下也不会多出目录：
+
+```shell
+npm install hexo-theme-webstack-next
+hexo config theme webstack-next
+```
+
+主题会装到 `node_modules/hexo-theme-webstack-next`，Hexo 按包名找到它，主题名仍是 `webstack-next`。安装脚本会在站点根目录生成 `_config.webstack-next.yml`；如果站点里已有 `_config.webstack.yml` 或 `source/_data/webstack.yml`，会以它为模板，以后重装不会覆盖你改好的配置。
+
+这份配置由包的 `postinstall` 脚本创建。如果安装时用了 `--ignore-scripts`，或你的 registry 禁止执行依赖的安装脚本，脚本不会运行，手动把 `node_modules/hexo-theme-webstack-next/_config.example.yml` 复制到站点根目录并重命名为 `_config.webstack-next.yml` 即可，效果相同。
+
+### 方式三：用 npm 安装本地目录
 
 如果你想一边改主题、一边在站点里看效果（包括未提交的改动），用这种方式。
 
@@ -384,6 +397,13 @@ hexo clean
 ```
 
 如果新版本增加了依赖，在站点根目录再执行一次 `npm install`。把 `_config.webstack-next.yml` 与新版的 `_config.example.yml` 对比一下，补上新增配置。
+
+### npm 安装
+
+```shell
+npm install hexo-theme-webstack-next@latest
+hexo clean
+```
 
 ### npm 本地目录安装
 

@@ -52,7 +52,20 @@ themes/webstack-next/_config.example.yml  ->  _config.webstack-next.yml
 
 Keep the copy in the site root, not inside `themes/`, and edit it instead of the sample in the theme folder.
 
-### Option B: install a local checkout with npm
+### Option B: install from npm
+
+The theme is published to npm, so no Git clone and no extra folder under `themes/` is needed:
+
+```shell
+npm install hexo-theme-webstack-next
+hexo config theme webstack-next
+```
+
+The package lands in `node_modules/hexo-theme-webstack-next` and Hexo resolves it by package name, keeping the theme name `webstack-next`. The install script creates `_config.webstack-next.yml` in your site root; when you already have `_config.webstack.yml` or `source/_data/webstack.yml`, that file seeds the copy, and later reinstalls keep your edited settings.
+
+That file comes from the package's `postinstall` script. If you install with `--ignore-scripts`, or your registry blocks dependency install scripts, the script does not run: copy `node_modules/hexo-theme-webstack-next/_config.example.yml` to your site root as `_config.webstack-next.yml` yourself and you get the same result.
+
+### Option C: install a local checkout with npm
 
 Use this when you want to work on the theme and see your changes in a site, including uncommitted changes.
 
@@ -384,6 +397,13 @@ hexo clean
 ```
 
 Run `npm install` in the site root if the update adds or changes dependencies. Compare your `_config.webstack-next.yml` with the new `_config.example.yml` for new settings.
+
+### npm installation
+
+```shell
+npm install hexo-theme-webstack-next@latest
+hexo clean
+```
 
 ### Local npm installation
 

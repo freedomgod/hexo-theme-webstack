@@ -6,7 +6,8 @@ output/
 .hexo-dev/
 dev-site/
 tools/
-docs/superpowers/
+AGENTS.md
+docs/
 test/
 .webstack/
 examples/*.tmp
