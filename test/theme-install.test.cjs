@@ -20,30 +20,23 @@ test('development theme has an independent npm package identity', () => {
   assert.equal(require('../package.json').name, 'hexo-theme-webstack-next');
 });
 
-test('installation imports old settings without changing the original or replacing new core styles', t => {
+test('installation seeds the config from the example and ignores an older WebStack install', t => {
   const { base, themeDir } = fixture(t);
-  const original = '# Keep this comment\nmenu: []\ncustom:\n  head: <link href="/css/custom.css">\nicon: fa-solid fa-star\n';
+  const original = '# Keep this comment\nmenu: []\ncustom:\n  head: <link href="/css/custom.css">\n';
   fs.writeFileSync(path.join(base, '_config.webstack.yml'), original);
-  for (const [filename, value] of [
-    ['themes/webstack/source/css/hclonely.css', 'old core'],
-    ['themes/webstack/source/css/custom.css', 'personal style'],
-    ['themes/webstack/source/css/fonts/fontawesome/css/all.min.css', 'old FA6'],
-    ['node_modules/hexo-theme-webstack-next/source/css/hclonely.css', 'new core']
-  ]) {
-    fs.mkdirSync(path.dirname(path.join(base, filename)), { recursive: true });
-    fs.writeFileSync(path.join(base, filename), value);
-  }
-  assert(fs.existsSync(path.join(root, 'lib/theme-install.cjs')), 'local install setup should exist');
+  fs.mkdirSync(path.join(base, 'source/_data'), { recursive: true });
+  fs.writeFileSync(path.join(base, 'source/_data/webstack.yml'), 'menu: []\n');
+  fs.mkdirSync(path.join(base, 'themes/webstack/source/css'), { recursive: true });
+  fs.writeFileSync(path.join(base, 'themes/webstack/source/css/custom.css'), 'old style');
   const { setupTheme } = require('../lib/theme-install.cjs');
   setupTheme(base, themeDir);
-  assert.equal(fs.readFileSync(path.join(base, '_config.webstack-next.yml'), 'utf8'), original);
+  const configPath = path.join(base, '_config.webstack-next.yml');
+  assert.equal(fs.readFileSync(configPath, 'utf8'), fs.readFileSync(path.join(root, '_config.example.yml'), 'utf8'));
   assert.equal(fs.readFileSync(path.join(base, '_config.webstack.yml'), 'utf8'), original);
-  assert.equal(fs.readFileSync(path.join(themeDir, 'source/css/hclonely.css'), 'utf8'), 'new core');
-  assert.equal(fs.readFileSync(path.join(themeDir, 'source/css/custom.css'), 'utf8'), 'personal style');
-  assert.equal(fs.readFileSync(path.join(themeDir, 'source/css/fonts/fontawesome/css/all.min.css'), 'utf8'), 'old FA6');
-  fs.writeFileSync(path.join(base, '_config.webstack-next.yml'), 'menu: []\n# my new settings\n');
+  assert(!fs.existsSync(path.join(themeDir, 'source')), 'upstream source/ must not be copied');
+  fs.writeFileSync(configPath, 'menu: []\n# my new settings\n');
   setupTheme(base, themeDir);
-  assert.equal(fs.readFileSync(path.join(base, '_config.webstack-next.yml'), 'utf8'), 'menu: []\n# my new settings\n');
+  assert.equal(fs.readFileSync(configPath, 'utf8'), 'menu: []\n# my new settings\n');
 });
 
 test('fresh installs get a usable independent config and non-Hexo projects are untouched', t => {
