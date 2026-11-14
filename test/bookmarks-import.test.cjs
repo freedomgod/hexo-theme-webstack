@@ -58,15 +58,45 @@ test('exports visible YAML lists with hierarchy, icons and order, without sample
   assert.match(fs.readFileSync(path.join(options.base, '.gitignore'), 'utf8'), /\/\.webstack\//);
 });
 
-test('never overwrites an existing database and supports a separate private output', t => {
+test('renames a colliding export with a timestamp and never overwrites an existing database', t => {
   const options = fixture(t);
   const first = api().exportDatabase(options);
   const bytes = fs.readFileSync(first.filename);
-  assert.throws(() => api().exportDatabase(options), /already exists/);
+  const second = api().exportDatabase(options);
+  assert.notEqual(second.filename, first.filename);
+  assert.equal(path.dirname(second.filename), path.dirname(first.filename));
+  assert.match(path.basename(second.filename), /^bookmarks-\d{8}-\d{6}(-\d+)?\.sqlite$/);
   assert.deepEqual(fs.readFileSync(first.filename), bytes);
-  const copy = api().exportDatabase({ ...options, database: '.webstack/backup.sqlite' });
-  assert.equal(copy.bookmarks, 3);
-  assert.throws(() => api().exportDatabase({ ...options, database: 'public/leak.sqlite' }), /\.webstack/);
+  const db = new DatabaseSync(second.filename, { readOnly: true });
+  try { assert.equal(db.prepare('SELECT count(*) AS count FROM bookmarks').get().count, 3); } finally { db.close(); }
+
+  const named = api().exportDatabase({ ...options, database: '.webstack/backup.sqlite' });
+  const namedBytes = fs.readFileSync(named.filename);
+  const renamed = api().exportDatabase({ ...options, database: '.webstack/backup.sqlite' });
+  assert.match(path.basename(renamed.filename), /^backup-\d{8}-\d{6}(-\d+)?\.sqlite$/);
+  assert.deepEqual(fs.readFileSync(named.filename), namedBytes);
+  assert.equal(renamed.bookmarks, 3);
+  assert.throws(() => api().exportDatabase({ ...options, database: 'public/leak.sqlite' }), /published/);
+});
+
+test('normalizes Font Awesome 6 YAML icons before storing them in SQLite', t => {
+  const options = fixture(t);
+  options.themeConfig = {
+    menu: [
+      { name: '工具', icon: 'fa-solid fa-screwdriver-wrench', config: 'tools' },
+      { name: '资源', icon: 'fa-solid fa-book-open-reader', config: 'empty' }
+    ],
+    tools: [{ name: '示例', url: 'https://example.com/' }]
+  };
+  const result = api().exportDatabase(options);
+  const db = new DatabaseSync(result.filename, { readOnly: true });
+  try {
+    assert.deepEqual(db.prepare('SELECT name, icon FROM categories ORDER BY id').all().map(row => ({ ...row })), [
+      { name: '工具', icon: 'fas fa-tools' },
+      { name: '资源', icon: 'fas fa-book-reader' }
+    ]);
+  } finally { db.close(); }
+  assert.deepEqual(readNavigation(options).menu.map(row => row.icon), ['fas fa-tools', 'fas fa-book-reader']);
 });
 
 test('active theme data override wins and .yaml/.json lists are supported', t => {

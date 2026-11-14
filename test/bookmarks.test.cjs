@@ -59,6 +59,15 @@ test('exports the sample with existing template fields and preserves determinist
   assert(!Object.hasOwn(hidden, 'sqlite_category_3'));
 });
 
+test('normalizes Font Awesome 6 category icons read from SQLite', t => {
+  const options = fixture(t);
+  api().initialize(options);
+  edit(options, "UPDATE categories SET icon = 'fa-solid fa-screwdriver-wrench' WHERE id = 1; UPDATE categories SET icon = 'fa-solid fa-book-open-reader' WHERE id = 2");
+  const result = api().exportBookmarks(options);
+  assert.equal(result.menu[0].icon, 'fas fa-tools');
+  assert.equal(result.menu[1].icon, 'fas fa-book-reader');
+});
+
 for (const [label, sql, message] of [
   ['orphan category', 'PRAGMA foreign_keys=OFF; UPDATE categories SET parent_id=999 WHERE id=3', /parent/],
   ['deep hierarchy', 'UPDATE categories SET parent_id=3 WHERE id=4', /two levels/],
@@ -91,15 +100,38 @@ test('missing/corrupt database and unowned output never overwrite user files', t
   assert.throws(() => api().exportBookmarks(options), /database/);
 });
 
-test('rejects public/source database paths and links into public content', t => {
+test('rejects database paths that would be published', t => {
   const options = fixture(t);
-  for (const database of ['source/bookmarks.sqlite', 'public/bookmarks.sqlite', '../bookmarks.sqlite']) {
-    assert.throws(() => api().initialize({ ...options, database }), /\.webstack/);
+  for (const database of ['source/bookmarks.sqlite', 'source/nested/db.sqlite', 'public/bookmarks.sqlite']) {
+    assert.throws(() => api().initialize({ ...options, database }), /published/);
   }
   fs.mkdirSync(options.sourceDir);
   fs.symlinkSync(options.sourceDir, path.join(options.base, '.webstack'), process.platform === 'win32' ? 'junction' : 'dir');
-  assert.throws(() => api().initialize(options), /source|private/);
+  assert.throws(() => api().initialize(options), /published/);
   assert.deepEqual(fs.readdirSync(options.sourceDir), []);
+});
+
+test('accepts a custom database path outside source/ and public/', t => {
+  const options = fixture(t);
+  const custom = api().initialize({ ...options, database: 'data/bookmarks.sqlite' });
+  assert.equal(custom, path.join(options.base, 'data/bookmarks.sqlite'));
+  assert(fs.existsSync(custom));
+  assert(!fs.existsSync(path.join(options.base, '.gitignore')), 'custom paths are not ignored automatically');
+  assert.equal(api().exportBookmarks({ ...options, database: custom }).menu.length, 2);
+  const external = fs.mkdtempSync(path.join(os.tmpdir(), 'webstack-external-'));
+  t.after(() => fs.rmSync(external, { recursive: true, force: true }));
+  const absolute = api().initialize({ ...options, database: path.join(external, 'bookmarks.sqlite') });
+  assert(fs.existsSync(absolute));
+  assert(!fs.existsSync(path.join(options.base, '.gitignore')));
+});
+
+test('explains a published path in one readable line instead of a stack trace', t => {
+  const options = fixture(t);
+  let error;
+  try { api().initialize({ ...options, database: 'source/bookmarks.sqlite' }); } catch (caught) { error = caught; }
+  assert.match(error.message, /would be published/);
+  assert.match(error.message, /outside source\/ and public\//);
+  assert.doesNotMatch(error.stack, /\n\s+at /, 'configuration errors should not print a stack');
 });
 
 test('reads committed WAL changes while another SQLite connection is open', t => {

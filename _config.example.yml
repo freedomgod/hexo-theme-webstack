@@ -32,10 +32,13 @@ expandAll: false
 
 # Optional local SQLite source. Requires Node.js 22.13+; run `hexo bookmarks init`.
 # Exports webstack.generated.yml before server/generate/deploy. Keep the DB private.
+# When enabled, menu categories and icons come from categories.name/icon; the YAML menu below is ignored.
 bookmark_db:
   enable: false
-  path: .webstack/bookmarks.sqlite # Relative to the Hexo site root; stay in .webstack/.
+  path: .webstack/bookmarks.sqlite # Site-relative or absolute; must stay outside source/ and public/.
 
+# Icons use the bundled Font Awesome 5. FA6 fa-solid/fa-regular/fa-brands prefixes
+# and common FA6 names are normalized automatically.
 menu:
   - name: 常用工具
     icon: far fa-star

@@ -240,13 +240,13 @@ hexo bookmarks export-db
 
 命令会读取首页的 `menu` 和它引用的所有列表（内联的或放在 `source/_data/` 的），写入 `.webstack/bookmarks.sqlite`。分类顺序、图标、层级关系，以及网址的顺序、名称、链接、图片、说明和标签都会保留。它不会修改 YAML 文件，不会自动开启 SQLite，也不会生成页面。
 
-目标文件已存在时不会覆盖。需要换个位置时：
+`export-db` 面向迁移和备份：目标文件已存在时不会报错，也不会覆盖，而是在同一目录下改用带时间后缀的新文件名（例如 `.webstack/bookmarks-20261114-124153.sqlite`），并在命令输出里打印实际路径。也可以自己指定文件名：
 
 ```shell
 hexo bookmarks export-db --output .webstack/current-bookmarks.sqlite
 ```
 
-然后把 `bookmark_db.path` 指向这个文件。输出路径必须位于 `.webstack/` 内，命令会拒绝写入 `source/` 和 `public/`。
+`--output` 指向的文件已存在时同样会自动加时间后缀。然后把 `bookmark_db.path` 指向实际生成的文件。输出路径可以在 `source/`、`public/` 之外的任意位置；这两个目录会被发布，所以命令会拒绝写入。
 
 `export-db` 只转换首页导航；写在子页面 front matter 里的列表不会合并进来。如果数据库正在使用，需要备份请用 SQLite 工具自带的备份或导出功能。
 
@@ -260,7 +260,7 @@ bookmark_db:
   path: .webstack/bookmarks.sqlite
 ```
 
-路径相对于站点根目录，且必须位于 `.webstack/` 内。启用后，导航数据以数据库为准；配色、Logo、关于页等其他配置仍然从配置文件读取。
+路径可以相对站点根目录，也可以写绝对路径，但必须位于 `source/`、`public/` 之外——这两个目录会被发布。`.webstack/bookmarks.sqlite` 是默认位置，也是主题唯一会自动写入 `.gitignore` 的位置；放在别处需要你自己忽略该文件（SQLite 还会在它旁边生成 `-wal`/`-shm` 文件）。启用后，导航数据以数据库为准；侧边栏的分类名称和图标直接来自 `categories.name` 与 `categories.icon`，不需要在 YAML 的 `menu` 中重复配置（`menu` 会被数据库覆盖）。配色、Logo、关于页等其他配置仍然从配置文件读取。
 
 如果还没有任何书签，可以先生成一个样例数据库：
 
@@ -274,7 +274,7 @@ hexo bookmarks init
 hexo bookmarks init --from "D:/path/to/Bookmark.db"
 ```
 
-初始化会复制一份一致的快照，源文件保持不变。目标数据库已存在时不会覆盖；同时会把 `/.webstack/` 写入站点的 `.gitignore`。
+初始化会复制一份一致的快照，源文件保持不变。目标数据库已存在时会报错，不会覆盖；同时会把 `/.webstack/` 写入站点的 `.gitignore`。
 
 ### 3. 修改与发布
 
@@ -296,7 +296,7 @@ hexo bookmarks init --from "D:/path/to/Bookmark.db"
 | `id` | 整数主键。插入时可以留空，由 SQLite 分配。 |
 | `parent_id` | 顶级分类为 `NULL`，子分类填父分类的 `id`。 |
 | `name` | 显示名称。 |
-| `icon` | Font Awesome 5 类名，例如 `fas fa-tools`，默认 `fas fa-folder`。 |
+| `icon` | Font Awesome 5 类名，例如 `fas fa-tools`，默认 `fas fa-folder`。FA6 的 `fa-solid`/`fa-regular`/`fa-brands` 写法及常见新名称会被自动转换。 |
 | `sort_order` | 整数，升序排列；相同时按 `id` 排序。 |
 | `enabled` | `1` 显示，`0` 隐藏。父分类隐藏时，其子分类也隐藏。 |
 
@@ -313,6 +313,8 @@ hexo bookmarks init --from "D:/path/to/Bookmark.db"
 | `sort_order`、`enabled` | 规则同分类。 |
 
 分类最多两级。已经有子分类的父分类不能直接放网址；删除分类前要先移走或删除它下面的网址。孤立分类、循环引用和超过两级的结构都会被拒绝，即使 `enabled` 为 `0`。
+
+主题内置 Font Awesome 5.13。为了兼容从 FA6 文档复制的图标，`fa-solid`、`fa-regular`、`fa-brands` 会分别转成 `fas`、`far`、`fab`，常见的 FA6 新名称也会映射到 FA5（例如 `fa-book-open-reader` → `fa-book-reader`，`fa-screwdriver-wrench` → `fa-tools`，`fa-magnifying-glass` → `fa-search`）。未收录的 FA6 图标仍需改成 FA5 名称；`far` 只适用于 FA5 中存在 regular 版本的图标。
 
 主题会把每个分类转成 `sqlite_category_1` 这样的列表键，因此原有那些有名字的 YAML 列表可以留作备份。
 
@@ -336,16 +338,16 @@ COMMIT;
 | 命令 | 作用 |
 | --- | --- |
 | `hexo bookmarks init` | 用内置样例创建 `.webstack/bookmarks.sqlite`。 |
-| `hexo bookmarks init --from <路径>` | 把已有的 Bookmark.db 复制到私有目录，源文件不变。 |
-| `hexo bookmarks export-db` | 把当前 YAML 导航转换成新数据库。 |
-| `hexo bookmarks export-db --output <路径>` | 转换到 `.webstack/` 内的其他文件。 |
+| `hexo bookmarks init --from <路径>` | 把已有的 Bookmark.db 复制到配置的数据库路径，源文件不变。 |
+| `hexo bookmarks export-db` | 把当前 YAML 导航转换成新数据库；目标已存在时自动改用带时间后缀的文件名。 |
+| `hexo bookmarks export-db --output <路径>` | 转换到 `source/`、`public/` 之外的其他文件；已存在时同样自动改名。 |
 | `hexo bookmarks export` | 把当前数据库导出为 `webstack.generated.yml`，不生成页面。 |
 
 启用数据库后，`hexo s`、`hexo g` 和 `hexo d` 都会自动刷新生成的导航数据。`hexo s --static` 直接使用已有的 `public/`，改动书签后要先执行 `hexo g`。
 
 ### 注意事项
 
-- 数据库、它的 WAL/journal 文件以及 `webstack.generated.yml` 都是本地工作文件。`.webstack/` 会写入 `.gitignore`，其中的内容不会发布。
+- 数据库、它的 WAL/journal 文件以及 `webstack.generated.yml` 都是本地工作文件。`/.webstack/` 会自动写入 `.gitignore`；数据库放在别处时需要自己忽略。不要放进 `source/` 或 `public/`，它们会被发布。
 - CI 构建如果拿不到数据库，就无法渲染 SQLite 书签。可以在 CI 中使用提交为 YAML 的导航并关闭 SQLite，或者在 CI 环境提供数据库文件。
 - 旧版 `Bookmark.db` 的 `category`、`bookmark` 表也能直接读取；图标会映射到 Font Awesome 5，不加载 iconfont 字体。
 - 想退回 YAML 书签，把 `bookmark_db.enable` 设为 `false` 即可，生成的 YAML 会被忽略。
@@ -437,10 +439,10 @@ node -e "console.log(require('hexo-theme-webstack-next/package.json').version)"
 | 提示 `Console bookmarks has not been registered` | 在站点根目录执行；确认 `theme: webstack-next` 已启用；不要使用 `--safe`，它会跳过主题脚本。 |
 | `hexo bookmarks export-db` 报 `Usage: hexo bookmarks <init\|export>` | 安装的主题版本太旧，还没有 `export-db`。按上面的方法更新主题后重试。 |
 | 报 `SQLite bookmarks require Node.js 22.13+` | 在同一个终端里执行 `node --version` 确认版本，或继续使用 YAML 模式。 |
-| 报 `Bookmark database already exists` | 初始化只执行一次。直接编辑已有数据库，或在 `.webstack/` 下换一个新路径。 |
+| 报 `Bookmark database already exists` | `bookmarks init` 只执行一次，直接编辑已有数据库，或换一个不会被发布的路径。`export-db` 不会报这个错，目标已存在时会自动生成带时间后缀的新文件。 |
 | 报 `Bookmark database missing` | 先执行 `hexo bookmarks init` 或 `export-db`，并检查 `bookmark_db.path` 是否正确、是否相对站点根目录。 |
 | 修改书签后页面没变化 | 确认编辑器里的事务已提交；确认改的是实际使用的数据库而不是导入来源；重启 `hexo s`；用 `hexo s --static` 时先执行 `hexo g`。 |
-| 报 `The bookmark database must be inside the private .webstack/ directory` | 把文件移进 `.webstack/`。`source/` 和 `public/` 下的路径会被有意拒绝。 |
+| 报 `Bookmark database would be published` | 把 `bookmark_db.path` 移到 `source/`、`public/` 之外——这两个目录会被发布。默认的 `.webstack/bookmarks.sqlite` 可以直接用。 |
 | 数据库被锁定 | 先在编辑器里结束写事务。主题最多等待三秒，且读不到未提交的数据。 |
 | 分类与数据文件冲突 | 报错信息会指出冲突的 `source/_data/` 文件。改名、删除该文件，或修正分类引用。 |
 | 报拒绝覆盖 `webstack.generated.yml` | 该文件被手动创建过。把它移走，或继续用 YAML 模式维护导航。 |

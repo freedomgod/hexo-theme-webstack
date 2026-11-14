@@ -240,13 +240,13 @@ hexo bookmarks export-db
 
 This reads the homepage `menu` and every referenced list (inline or in `source/_data/`) and writes `.webstack/bookmarks.sqlite`. Category order, icons and hierarchy, bookmark order, names, links, images, descriptions and tags are preserved. It does not modify your YAML files, does not enable SQLite, and does not generate pages.
 
-An existing database is never overwritten. To write somewhere else:
+`export-db` is for migration and backups, so an existing target is not an error and is never overwritten: it writes a new file with a timestamp suffix in the same directory, such as `.webstack/bookmarks-20261114-124153.sqlite`, and prints the actual path. You can also choose the name yourself:
 
 ```shell
 hexo bookmarks export-db --output .webstack/current-bookmarks.sqlite
 ```
 
-Then set `bookmark_db.path` to that file. The output must stay inside `.webstack/`; the command refuses paths in `source/` or `public/`.
+If the `--output` file already exists, it gets the same timestamp suffix. Point `bookmark_db.path` at the file that was actually written. The output may be any path outside `source/` and `public/`; those two are published, so the command refuses them.
 
 `export-db` converts homepage navigation only. Lists defined in child page front matter are not merged into this database. To back up a database that is already in use, use your SQLite tool's backup or export feature.
 
@@ -260,7 +260,7 @@ bookmark_db:
   path: .webstack/bookmarks.sqlite
 ```
 
-The path is relative to the site root and must stay inside `.webstack/`. While the database is enabled, it replaces the navigation used for rendering. Your colours, logos, about page and other settings keep coming from the configuration file.
+The path may be relative to the site root or absolute, and it must stay outside `source/` and `public/`, which are published. `.webstack/bookmarks.sqlite` is the default and the only location whose `.gitignore` rule the theme adds for you; a database kept elsewhere must be ignored by you (SQLite also creates `-wal`/`-shm` files next to it). While the database is enabled, it replaces the navigation used for rendering; sidebar category names and icons come directly from `categories.name` and `categories.icon`, so the YAML `menu` does not need to be repeated (it is overwritten by the database). Your colours, logos, about page and other settings keep coming from the configuration file.
 
 If you have no bookmarks yet, create a sample database instead of exporting:
 
@@ -296,7 +296,7 @@ The database uses schema version 1.
 | `id` | Integer primary key. Omit it on insert to let SQLite assign one. |
 | `parent_id` | `NULL` for a top-level category, otherwise the parent's `id`. |
 | `name` | Display name. |
-| `icon` | Font Awesome 5 classes, for example `fas fa-tools`. Defaults to `fas fa-folder`. |
+| `icon` | Font Awesome 5 classes, for example `fas fa-tools`. Defaults to `fas fa-folder`. FA6 `fa-solid`/`fa-regular`/`fa-brands` prefixes and common FA6 names are normalized automatically. |
 | `sort_order` | Integer, ascending. Equal values fall back to `id`. |
 | `enabled` | `1` to show, `0` to hide. A hidden parent hides its children. |
 
@@ -313,6 +313,8 @@ The database uses schema version 1.
 | `sort_order`, `enabled` | Same rules as categories. |
 
 Categories support two levels. A parent category with children cannot contain bookmarks directly. Deleting a category requires moving or deleting its bookmarks first. Orphaned, cyclic and deeper-than-two-level structures are rejected, including when `enabled` is `0`.
+
+The theme bundles Font Awesome 5.13. To support icons copied from FA6 documentation, `fa-solid`, `fa-regular` and `fa-brands` become `fas`, `far` and `fab`, and common FA6 names are mapped to FA5 equivalents (`fa-book-open-reader` → `fa-book-reader`, `fa-screwdriver-wrench` → `fa-tools`, `fa-magnifying-glass` → `fa-search`). FA6 icons not in that mapping still need an FA5 name; `far` only works for icons that have a regular variant in FA5.
 
 The theme turns each category into a list key such as `sqlite_category_1`, so your existing named YAML lists can stay as backups.
 
@@ -336,16 +338,16 @@ Run these in the Hexo site root with the theme active. `hexo bookmarks` is a com
 | Command | What it does |
 | --- | --- |
 | `hexo bookmarks init` | Creates `.webstack/bookmarks.sqlite` from the bundled sample. |
-| `hexo bookmarks init --from <path>` | Copies an existing Bookmark.db into the private directory without changing the source. |
-| `hexo bookmarks export-db` | Converts the current YAML navigation into a new database. |
-| `hexo bookmarks export-db --output <path>` | Writes the conversion to a different file inside `.webstack/`. |
+| `hexo bookmarks init --from <path>` | Copies an existing Bookmark.db to the configured database path without changing the source. |
+| `hexo bookmarks export-db` | Converts the current YAML navigation into a new database; an existing target is renamed with a timestamp. |
+| `hexo bookmarks export-db --output <path>` | Writes the conversion to a different file outside `source/` and `public/`; an existing file is renamed with a timestamp. |
 | `hexo bookmarks export` | Writes the current database to `webstack.generated.yml` without generating pages. |
 
 `hexo s`, `hexo g` and `hexo d` refresh the generated navigation automatically when the database is enabled. `hexo s --static` serves the existing `public/` folder, so run `hexo g` first if you changed bookmarks.
 
 ### Notes and limits
 
-- The database, its WAL/journal files and `webstack.generated.yml` are local working files. `.webstack/` is added to `.gitignore` and nothing from it is published.
+- The database, its WAL/journal files and `webstack.generated.yml` are local working files. `/.webstack/` is added to `.gitignore` automatically; a database kept elsewhere must be ignored by you. Never keep it in `source/` or `public/`, which are published.
 - A CI build without the database cannot render SQLite bookmarks. Either commit the generated navigation as YAML and disable SQLite there, or provide the database in the CI environment.
 - The legacy `Bookmark.db` schema (`category` and `bookmark` tables) is also read directly. Its icons are mapped to Font Awesome 5; iconfont fonts are not loaded.
 - To return to YAML bookmarks, set `bookmark_db.enable: false`. The generated YAML is then ignored.
@@ -437,10 +439,10 @@ node -e "console.log(require('hexo-theme-webstack-next/package.json').version)"
 | `Console bookmarks has not been registered` | Run the command in the site root, make sure `theme: webstack-next` is active, and do not use `--safe`, which skips theme scripts. |
 | `hexo bookmarks export-db` prints `Usage: hexo bookmarks <init\|export>` | The installed copy predates the `export-db` command. Update the theme (see above) and run it again. |
 | `SQLite bookmarks require Node.js 22.13+` | Check `node --version` in the same terminal, or leave SQLite mode disabled. |
-| `Bookmark database already exists` | Initialization runs once. Edit the existing database, or choose a new path under `.webstack/`. |
+| `Bookmark database already exists` | `init` runs once. Keep editing the existing database, or choose another path that is not published. `export-db` does not raise this error; it writes a timestamped file instead. |
 | `Bookmark database missing` | Run `hexo bookmarks init` or `export-db`, and check that `bookmark_db.path` is correct and relative to the site root. |
 | Bookmark edits do not appear | Commit the editor's transaction, edit the private copy (not an import source), and restart `hexo s`. For `hexo s --static`, run `hexo g` first. |
-| `The bookmark database must be inside the private .webstack/ directory` | Move the file into `.webstack/`. Paths in `source/` and `public/` are rejected on purpose. |
+| `Bookmark database would be published` | Move `bookmark_db.path` outside `source/` and `public/`, which are published. The default `.webstack/bookmarks.sqlite` works. |
 | Database is locked | Finish the write transaction in your editor. The theme waits up to three seconds and cannot read uncommitted changes. |
 | Category/data conflict | The error names the conflicting `source/_data/` file. Rename or remove it, or fix the category references. |
 | Refusing to overwrite `webstack.generated.yml` | The file was created by hand. Move it aside, or keep manual navigation in YAML mode. |

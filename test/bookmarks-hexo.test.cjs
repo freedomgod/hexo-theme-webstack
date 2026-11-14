@@ -9,7 +9,7 @@ const yaml = require('js-yaml');
 const { DatabaseSync } = require('node:sqlite');
 
 const root = path.resolve(__dirname, '..');
-async function fixture(t, enabled = true, legacy = false) {
+async function fixture(t, enabled = true, legacy = false, overrides = {}) {
   fs.mkdirSync(path.join(root, 'output'), { recursive: true });
   const base = fs.mkdtempSync(path.join(root, 'output', 'sqlite-check-'));
   const themeDir = path.join(base, 'themes/webstack-next');
@@ -23,6 +23,7 @@ async function fixture(t, enabled = true, legacy = false) {
   fs.writeFileSync(path.join(base, '_config.yml'), yaml.dump({ theme: 'webstack-next', title: 'SQLite test', url: 'https://example.com', deploy: { type: 'capture' } }));
   const theme = yaml.load(fs.readFileSync(path.join(root, '_config.example.yml'), 'utf8'));
   theme.bookmark_db = { enable: enabled };
+  Object.assign(theme, overrides);
   fs.writeFileSync(path.join(base, legacy ? 'source/_data/webstack-next.yml' : '_config.webstack-next.yml'), yaml.dump(theme));
   const hexo = new Hexo(base, { silent: true });
   const errors = [];
@@ -102,6 +103,18 @@ test('disabled mode preserves YAML, and conflicting category data fails explicit
   assert(!fs.existsSync(path.join(base, 'webstack.generated.yml')), 'conflicts must fail before writing YAML');
 });
 
+test('normalizes Font Awesome 6 icons from YAML before rendering', async t => {
+  const { hexo, base } = await fixture(t, false, false, {
+    menu: [{ name: '工具', icon: 'fa-solid fa-screwdriver-wrench', config: 'hotTools' }],
+    about: { url: '/about/', icon: 'fa-solid fa-address-card', name: '关于本站' }
+  });
+  await hexo.call('generate', { bail: true });
+  const html = fs.readFileSync(path.join(base, 'public/index.html'), 'utf8');
+  assert.match(html, /class="fas fa-tools"/);
+  assert.match(html, /class="fas fa-address-card"/);
+  assert.doesNotMatch(html, /fa-solid/);
+});
+
 test('export-db reads split YAML even when SQLite is enabled but missing, without generating pages', async t => {
   const { hexo, base } = await fixture(t, true);
   const list = '- name: 当前 YAML 书签\n  url: https://example.com/current\n  tags: 中文,工具\n';
@@ -117,9 +130,14 @@ test('export-db reads split YAML even when SQLite is enabled but missing, withou
   assert.equal(fs.readFileSync(path.join(base, 'source/_data/hotTools.yml'), 'utf8'), list);
   const db = new DatabaseSync(path.join(base, '.webstack/bookmarks.sqlite'), { readOnly: true });
   try { assert.equal(db.prepare('SELECT name FROM bookmarks WHERE id=1').get().name, '当前 YAML 书签'); } finally { db.close(); }
-  await assert.rejects(hexo.call('bookmarks', { _: ['export-db'] }), /already exists/);
-  await hexo.call('bookmarks', { _: ['export-db'], output: '.webstack/backup.sqlite' });
-  assert(fs.existsSync(path.join(base, '.webstack/backup.sqlite')));
+  const second = await hexo.call('bookmarks', { _: ['export-db'] });
+  assert.notEqual(second.filename, path.join(base, '.webstack/bookmarks.sqlite'));
+  assert.match(path.basename(second.filename), /^bookmarks-\d{8}-\d{6}(-\d+)?\.sqlite$/);
+  const backup = await hexo.call('bookmarks', { _: ['export-db'], output: '.webstack/backup.sqlite' });
+  assert.equal(backup.filename, path.join(base, '.webstack/backup.sqlite'));
+  const renamed = await hexo.call('bookmarks', { _: ['export-db'], output: '.webstack/backup.sqlite' });
+  assert.notEqual(renamed.filename, backup.filename);
+  assert.match(path.basename(renamed.filename), /^backup-\d{8}-\d{6}(-\d+)?\.sqlite$/);
   await hexo.call('generate', { bail: true });
   const html = fs.readFileSync(path.join(base, 'public/index.html'), 'utf8');
   assert.match(html, /当前 YAML 书签/);
