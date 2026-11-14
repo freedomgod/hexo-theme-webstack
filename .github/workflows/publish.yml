@@ -34,6 +34,15 @@ jobs:
       - name: Bump version from conventional commits
         id: bump
         run: node tools/bump-version.cjs
+      - name: Require the npm token
+        if: steps.bump.outputs.version != ''
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error title=Missing NPM_TOKEN::Add an NPM_TOKEN secret under Settings -> Secrets and variables -> Actions, then run this workflow again."
+            exit 1
+          fi
       - name: Publish to npm
         if: steps.bump.outputs.version != ''
         run: npm publish --provenance
