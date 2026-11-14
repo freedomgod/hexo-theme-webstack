@@ -481,7 +481,9 @@ Pushing to `master` runs [`Publish theme`](.github/workflows/publish.yml), which
 
 A successful run leaves a `v3.1.0` tag and a `chore(release): v3.1.0` commit behind, and moves npm's `latest` tag. Pushing documentation only does not publish anything, on purpose. To publish the current code right away, run `Publish theme` from the Actions tab; the version still follows the table above.
 
-The workflow needs an `NPM_TOKEN` Actions secret: create a granular access token on npm with Read and write access and bypass 2FA enabled, then add it under Settings → Secrets and variables → Actions → New repository secret. Without it only the publish step fails; the tests still run.
+Publishing uses npm trusted publishing (OIDC), so **no token is stored**: on npmjs.com open the package → Settings → Trusted publishing → GitHub Actions, and enter repository `freedomgod/hexo-theme-webstack-next` with workflow file `publish.yml`. The workflow already declares `id-token: write` and publishes with `--provenance`, so that is the only setup step.
+
+For an account that would rather keep a secret, a granular access token (Read and write, bypass 2FA) added as `NPM_TOKEN` under Settings → Secrets and variables → Actions still works as a fallback. npm is retiring that path: since July 2026 bypass-2FA tokens cannot perform account operations, and from January 2027 they lose direct publishing.
 
 Preview the next version locally without touching any file:
 

@@ -481,7 +481,9 @@ npm test        # 安装检查 + 书签与安装脚本测试
 
 发布成功后，仓库会多出一个 `v3.1.0` tag 和一个 `chore(release): v3.1.0` 提交，npm 上的 `latest` 同步更新。只有 `docs:` 的推送不会发版，这是有意的：文档改动随下一个版本一起出去。想立刻发当前代码，到 Actions 里手动运行 `Publish theme`；改动的提交信息仍按上表决定版本号。
 
-工作流需要仓库配置 `NPM_TOKEN` 这个 Actions secret：在 npm 生成一个 granular access token，权限选 Read and write，勾选 bypass 2FA，然后添加到 Settings → Secrets and variables → Actions → New repository secret。缺这个 secret 时只有发布步骤失败，测试步骤照常通过。
+发布使用 npm 的 trusted publishing（OIDC），**不需要保存任何 token**：在 npmjs.com 打开这个包 → Settings → Trusted publishing → GitHub Actions，填仓库 `freedomgod/hexo-theme-webstack-next`、workflow 文件名 `publish.yml`。工作流里的 `id-token: write` 和 `--provenance` 已经就绪，配置完直接运行即可。
+
+如果暂时不想在 npm 上配置发布者，仍然可以退回 secret 方式：生成一个 granular access token（Read and write，勾选 bypass 2FA），加到 Settings → Secrets and variables → Actions → New repository secret，名字 `NPM_TOKEN`。注意 npm 正在收缩这条路：2026 年 7 月起 bypass 2FA 的 token 已不能做账号类操作，2027 年 1 月起将失去直接发布能力，长期还是用 trusted publishing。
 
 本地预览下一次会升到哪个版本（不改任何文件）：
 

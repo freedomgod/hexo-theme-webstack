@@ -26,7 +26,9 @@ jobs:
           fetch-tags: true
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          # Node 24 ships npm >= 11.5.1, the first version that can publish
+          # through trusted publishing (OIDC) without a stored token.
+          node-version: 24
           cache: npm
           registry-url: https://registry.npmjs.org
       - run: npm ci
@@ -34,20 +36,20 @@ jobs:
       - name: Bump version from conventional commits
         id: bump
         run: node tools/bump-version.cjs
-      - name: Require the npm token
+      - name: Publish to npm
         if: steps.bump.outputs.version != ''
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -z "$NPM_TOKEN" ]; then
-            echo "::error title=Missing NPM_TOKEN::Add an NPM_TOKEN secret under Settings -> Secrets and variables -> Actions, then run this workflow again."
-            exit 1
+          # Trusted publishing signs the publish with the workflow's OIDC token
+          # and needs no secret. A token is only used when one is configured.
+          if [ -n "$NPM_TOKEN" ]; then
+            npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
           fi
-      - name: Publish to npm
-        if: steps.bump.outputs.version != ''
-        run: npm publish --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          npm publish --provenance || {
+            echo "::error title=Publish failed::Add a trusted publisher for this package on npmjs.com (Settings -> Trusted publishing -> GitHub Actions, repository freedomgod/hexo-theme-webstack-next, workflow publish.yml), or configure the NPM_TOKEN secret, then run this workflow again."
+            exit 1
+          }
       - name: Push release commit and tag
         if: steps.bump.outputs.version != ''
         run: |
