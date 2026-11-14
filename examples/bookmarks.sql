@@ -38,4 +38,4 @@ INSERT INTO bookmarks (id, category_id, name, url, img, description, sort_order)
   (2, 1, 'Hexo', 'https://hexo.io/', '/images/favicon.png', '快速、简洁的静态网站框架。', 20),
   (3, 3, 'Node.js', 'https://nodejs.org/', '/images/favicon.png', 'JavaScript 运行环境。', 10),
   (4, 3, 'Hexo 文档', 'https://hexo.io/zh-cn/docs/', '/images/favicon.png', '站点配置、内容管理与部署指南。', 20),
-  (5, 4, 'WebStack · freedomgod', 'https://github.com/freedomgod/hexo-theme-webstack', '/images/logos/github.png', '当前 fork 的源码、安装说明与问题反馈。', 10);
+  (5, 4, 'WebStack · freedomgod', 'https://github.com/freedomgod/hexo-theme-webstack-next', '/images/logos/github.png', '当前 fork 的源码、安装说明与问题反馈。', 10);

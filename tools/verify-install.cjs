@@ -45,7 +45,7 @@ async function main() {
       assert.equal((html.match(/<head>/g) || []).length, 1, `${route}: one head`);
       assert.equal((html.match(/<footer\b/g) || []).length, 1, `${route}: one footer`);
       assert(html.includes('name="author" content="Site Owner"'), `${route}: site author`);
-      assert(html.includes('github.com/freedomgod/hexo-theme-webstack'), `${route}: fork link`);
+      assert(html.includes('github.com/freedomgod/hexo-theme-webstack-next'), `${route}: fork link`);
       assert(html.includes('github.com/HCLonely/hexo-theme-webstack'), `${route}: upstream credit`);
       assert(!html.includes('class="submit-tag"'), `${route}: empty about disables link`);
       assert(!html.includes('undefined'), `${route}: no undefined values`);

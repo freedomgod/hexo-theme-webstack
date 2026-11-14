@@ -38,7 +38,7 @@ Run every command in your Hexo site root, the folder that contains `_config.yml`
 ### Option A: install from Git (recommended)
 
 ```shell
-git clone https://github.com/freedomgod/hexo-theme-webstack.git themes/webstack-next
+git clone https://github.com/freedomgod/hexo-theme-webstack-next.git themes/webstack-next
 npm install hexo-renderer-pug hexo-util pug js-yaml --save
 ```
 
@@ -61,7 +61,7 @@ npm install hexo-theme-webstack-next
 hexo config theme webstack-next
 ```
 
-The package lands in `node_modules/hexo-theme-webstack-next` and Hexo resolves it by package name, keeping the theme name `webstack-next`. The install script creates `_config.webstack-next.yml` in your site root; when you already have `_config.webstack.yml` or `source/_data/webstack.yml`, that file seeds the copy, and later reinstalls keep your edited settings.
+The package lands in `node_modules/hexo-theme-webstack-next` and Hexo resolves it by package name, keeping the theme name `webstack-next`. The install script copies the bundled `_config.example.yml` to `_config.webstack-next.yml` in your site root, and later reinstalls keep your edited settings.
 
 That file comes from the package's `postinstall` script. If you install with `--ignore-scripts`, or your registry blocks dependency install scripts, the script does not run: copy `node_modules/hexo-theme-webstack-next/_config.example.yml` to your site root as `_config.webstack-next.yml` yourself and you get the same result.
 
@@ -70,12 +70,12 @@ That file comes from the package's `postinstall` script. If you install with `--
 Use this when you want to work on the theme and see your changes in a site, including uncommitted changes.
 
 ```shell
-npm install --install-links "D:/path/to/hexo-theme-webstack" --registry=https://registry.npmjs.org
+npm install --install-links "D:/path/to/hexo-theme-webstack-next" --registry=https://registry.npmjs.org
 ```
 
-Replace the path with your checkout. The package is installed as `node_modules/hexo-theme-webstack-next`, with the theme name `webstack-next`, so there is nothing new in `themes/`. The install script creates `_config.webstack-next.yml` and imports settings from an existing `_config.webstack.yml` or `source/_data/webstack.yml` when it finds one; on later installs your existing new-theme settings are kept.
+Replace the path with your checkout. The package is installed as `node_modules/hexo-theme-webstack-next`, with the theme name `webstack-next`, so there is nothing new in `themes/`. The install script creates `_config.webstack-next.yml`; on later installs your existing settings are kept.
 
-Keep `--install-links` as shown. Without it, npm may link the checkout instead of copying it, and the installer then writes imported assets into your working copy.
+Keep `--install-links` as shown. Without it, npm links your checkout instead of copying it, so you are not testing the package you will publish.
 
 ### Select the theme
 
@@ -410,7 +410,7 @@ hexo clean
 Reinstall from the checkout:
 
 ```shell
-npm install --install-links "D:/path/to/hexo-theme-webstack" --registry=https://registry.npmjs.org
+npm install --install-links "D:/path/to/hexo-theme-webstack-next" --registry=https://registry.npmjs.org
 hexo clean
 ```
 
@@ -420,7 +420,7 @@ npm may reuse a cached copy when the package version has not changed, leaving ol
 # In the theme checkout:
 npm pack
 # In the Hexo site:
-npm install "D:/path/to/hexo-theme-webstack/hexo-theme-webstack-next-<version>.tgz"
+npm install "D:/path/to/hexo-theme-webstack-next/hexo-theme-webstack-next-<version>.tgz"
 hexo clean
 ```
 
@@ -468,9 +468,9 @@ Tests build a copied-theme site and cover SQLite initialization, legacy imports,
 
 ## Credits and license
 
-- Fork maintenance: [freedomgod](https://github.com/freedomgod/hexo-theme-webstack).
+- Fork maintenance: [freedomgod](https://github.com/freedomgod/hexo-theme-webstack-next).
 - Original theme: [HCLonely/hexo-theme-webstack](https://github.com/HCLonely/hexo-theme-webstack).
 - Original design: [WebStackPage / Viggo](https://github.com/WebStackPage/WebStackPage.github.io).
 - Static site framework: [Hexo](https://hexo.io/).
 
-Report fork-specific problems in [this repository's Issues](https://github.com/freedomgod/hexo-theme-webstack/issues). The theme is released under the [MIT license](LICENSE); original copyright and third-party notices are preserved. The bundled WebStack logos and sample images are placeholders for your own branding.
+Report fork-specific problems in [this repository's Issues](https://github.com/freedomgod/hexo-theme-webstack-next/issues). The theme is released under the [MIT license](LICENSE); original copyright and third-party notices are preserved. The bundled WebStack logos and sample images are placeholders for your own branding.

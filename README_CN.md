@@ -38,7 +38,7 @@ WebStack Next 是一个用来搭建个人网址导航的 [Hexo](https://hexo.io/
 ### 方式一：从 Git 安装（推荐）
 
 ```shell
-git clone https://github.com/freedomgod/hexo-theme-webstack.git themes/webstack-next
+git clone https://github.com/freedomgod/hexo-theme-webstack-next.git themes/webstack-next
 npm install hexo-renderer-pug hexo-util pug js-yaml --save
 ```
 
@@ -61,7 +61,7 @@ npm install hexo-theme-webstack-next
 hexo config theme webstack-next
 ```
 
-主题会装到 `node_modules/hexo-theme-webstack-next`，Hexo 按包名找到它，主题名仍是 `webstack-next`。安装脚本会在站点根目录生成 `_config.webstack-next.yml`；如果站点里已有 `_config.webstack.yml` 或 `source/_data/webstack.yml`，会以它为模板，以后重装不会覆盖你改好的配置。
+主题会装到 `node_modules/hexo-theme-webstack-next`，Hexo 按包名找到它，主题名仍是 `webstack-next`。安装脚本会把包内的 `_config.example.yml` 复制成站点根目录的 `_config.webstack-next.yml`，以后重装不会覆盖你改好的配置。
 
 这份配置由包的 `postinstall` 脚本创建。如果安装时用了 `--ignore-scripts`，或你的 registry 禁止执行依赖的安装脚本，脚本不会运行，手动把 `node_modules/hexo-theme-webstack-next/_config.example.yml` 复制到站点根目录并重命名为 `_config.webstack-next.yml` 即可，效果相同。
 
@@ -70,12 +70,12 @@ hexo config theme webstack-next
 如果你想一边改主题、一边在站点里看效果（包括未提交的改动），用这种方式。
 
 ```shell
-npm install --install-links "D:/path/to/hexo-theme-webstack" --registry=https://registry.npmjs.org
+npm install --install-links "D:/path/to/hexo-theme-webstack-next" --registry=https://registry.npmjs.org
 ```
 
-把路径换成你的主题目录。安装后主题位于 `node_modules/hexo-theme-webstack-next`，主题名仍是 `webstack-next`，`themes/` 下不会多出目录。安装脚本会自动创建 `_config.webstack-next.yml`；如果站点里已有 `_config.webstack.yml` 或 `source/_data/webstack.yml`，会以它为模板。以后再安装时会保留你已经改好的新主题配置。
+把路径换成你的主题目录。安装后主题位于 `node_modules/hexo-theme-webstack-next`，主题名仍是 `webstack-next`，`themes/` 下不会多出目录。安装脚本会自动创建 `_config.webstack-next.yml`；以后再安装时会保留你已经改好的配置。
 
-请保留示例中的 `--install-links`。不加这个参数时，npm 可能直接链接主题目录，安装脚本导入的旧主题素材就会写进你的开发副本。
+请保留示例中的 `--install-links`。不加这个参数时，npm 会链接你的主题目录而不是复制，测到的就不是你要发布出去的那份包。
 
 ### 启用主题
 
@@ -410,7 +410,7 @@ hexo clean
 重新从主题目录安装：
 
 ```shell
-npm install --install-links "D:/path/to/hexo-theme-webstack" --registry=https://registry.npmjs.org
+npm install --install-links "D:/path/to/hexo-theme-webstack-next" --registry=https://registry.npmjs.org
 hexo clean
 ```
 
@@ -420,7 +420,7 @@ hexo clean
 # 在主题目录执行：
 npm pack
 # 在 Hexo 站点目录执行：
-npm install "D:/path/to/hexo-theme-webstack/hexo-theme-webstack-next-<版本号>.tgz"
+npm install "D:/path/to/hexo-theme-webstack-next/hexo-theme-webstack-next-<版本号>.tgz"
 hexo clean
 ```
 
@@ -468,9 +468,9 @@ npm test        # 安装检查 + 书签与安装脚本测试
 
 ## 致谢与许可
 
-- 分支维护：[freedomgod](https://github.com/freedomgod/hexo-theme-webstack)。
+- 分支维护：[freedomgod](https://github.com/freedomgod/hexo-theme-webstack-next)。
 - 原主题：[HCLonely/hexo-theme-webstack](https://github.com/HCLonely/hexo-theme-webstack)。
 - 原始设计：[WebStackPage / Viggo](https://github.com/WebStackPage/WebStackPage.github.io)。
 - 静态框架：[Hexo](https://hexo.io/)。
 
-与本分支相关的问题请提交到[本仓库的 Issues](https://github.com/freedomgod/hexo-theme-webstack/issues)。主题以 [MIT 许可](LICENSE)发布，原作者版权与第三方声明均予保留。仓库内的 WebStack Logo 和示例图片仅作占位，请替换为你自己的素材。
+与本分支相关的问题请提交到[本仓库的 Issues](https://github.com/freedomgod/hexo-theme-webstack-next/issues)。主题以 [MIT 许可](LICENSE)发布，原作者版权与第三方声明均予保留。仓库内的 WebStack Logo 和示例图片仅作占位，请替换为你自己的素材。

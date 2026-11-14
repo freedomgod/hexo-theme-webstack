@@ -26,14 +26,14 @@
   "contributors": [
     "HCLonely <h1606051253@gmail.com> (https://github.com/HCLonely)"
   ],
-  "homepage": "https://github.com/freedomgod/hexo-theme-webstack#readme",
+  "homepage": "https://github.com/freedomgod/hexo-theme-webstack-next#readme",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/freedomgod/hexo-theme-webstack"
+    "url": "https://github.com/freedomgod/hexo-theme-webstack-next"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/freedomgod/hexo-theme-webstack.git"
+    "url": "https://github.com/freedomgod/hexo-theme-webstack-next.git"
   },
   "publishConfig": {
     "access": "public",

@@ -180,6 +180,6 @@ for (const extension of ['yml', 'yaml', 'json']) test(`export-db and fresh deplo
 test('bookmarks command names the supported actions and installed version', async t => {
   const { hexo } = await fixture(t, false);
   await assert.rejects(hexo.call('bookmarks', { _: [] }),
-    /Missing bookmarks action\. Usage: hexo bookmarks <init\|export\|export-db> \(hexo-theme-webstack \d+\.\d+\.\d+/);
+    /Missing bookmarks action\. Usage: hexo bookmarks <init\|export\|export-db> \(hexo-theme-webstack-next \d+\.\d+\.\d+/);
   await assert.rejects(hexo.call('bookmarks', { _: ['publish'] }), /Unknown bookmarks action "publish"\./);
 });
