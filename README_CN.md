@@ -468,6 +468,27 @@ npm test        # 安装检查 + 书签与安装脚本测试
 
 测试会复制一份主题并搭建临时站点，覆盖 SQLite 初始化、旧库导入、数据校验、服务器启动和部署前刷新等场景，需要 Node.js 22.13 或更高版本。执行 `npm run bookmarks:sample` 可以用 [`examples/bookmarks.sql`](examples/bookmarks.sql) 重新生成 [`examples/bookmarks.sqlite`](examples/bookmarks.sqlite)。生成的文件位于 `.hexo-dev/` 和 `output/`，不会进入 Git，也不会打进 npm 包。
 
+## 发布（维护者）
+
+推送到 `master` 后，[`Publish theme`](.github/workflows/publish.yml) 会自动跑测试、按提交信息升版本、打 tag 并发布到 npm：
+
+| 提交 | 版本 |
+| --- | --- |
+| `feat:` | minor，`3.0.6` → `3.1.0` |
+| `fix:` / `perf:` | patch，`3.0.6` → `3.0.7` |
+| 带 `!` 或正文有 `BREAKING CHANGE:` | major，`3.0.6` → `4.0.0` |
+| `docs:`、`chore:`、`ci:`、`test:` 等 | 不发版，等下一次有意义的提交 |
+
+发布成功后，仓库会多出一个 `v3.1.0` tag 和一个 `chore(release): v3.1.0` 提交，npm 上的 `latest` 同步更新。只有 `docs:` 的推送不会发版，这是有意的：文档改动随下一个版本一起出去。想立刻发当前代码，到 Actions 里手动运行 `Publish theme`；改动的提交信息仍按上表决定版本号。
+
+工作流需要仓库配置 `NPM_TOKEN` 这个 Actions secret：在 npm 生成一个 granular access token，权限选 Read and write，勾选 bypass 2FA，然后添加到 Settings → Secrets and variables → Actions → New repository secret。缺这个 secret 时只有发布步骤失败，测试步骤照常通过。
+
+本地预览下一次会升到哪个版本（不改任何文件）：
+
+```shell
+node tools/bump-version.cjs --dry-run
+```
+
 ## 致谢与许可
 
 - 分支维护：[freedomgod](https://github.com/freedomgod/hexo-theme-webstack-next)。

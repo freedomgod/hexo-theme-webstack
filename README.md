@@ -468,6 +468,27 @@ npm test        # install check + bookmark and installer tests
 
 Tests build a copied-theme site and cover SQLite initialization, legacy imports, validation, server startup and deployment refresh. They require Node.js 22.13 or newer. Run `npm run bookmarks:sample` to rebuild [`examples/bookmarks.sqlite`](examples/bookmarks.sqlite) from [`examples/bookmarks.sql`](examples/bookmarks.sql). Generated files go to `.hexo-dev/` and `output/`, which are excluded from Git and from the npm package.
 
+## Releasing
+
+Pushing to `master` runs [`Publish theme`](.github/workflows/publish.yml), which tests the theme, bumps the version from the commit messages, tags the commit and publishes to npm:
+
+| Commit | Version |
+| --- | --- |
+| `feat:` | minor, `3.0.6` → `3.1.0` |
+| `fix:` / `perf:` | patch, `3.0.6` → `3.0.7` |
+| `!` in the subject, or `BREAKING CHANGE:` in the body | major, `3.0.6` → `4.0.0` |
+| `docs:`, `chore:`, `ci:`, `test:` and friends | no release; they ship with the next one |
+
+A successful run leaves a `v3.1.0` tag and a `chore(release): v3.1.0` commit behind, and moves npm's `latest` tag. Pushing documentation only does not publish anything, on purpose. To publish the current code right away, run `Publish theme` from the Actions tab; the version still follows the table above.
+
+The workflow needs an `NPM_TOKEN` Actions secret: create a granular access token on npm with Read and write access and bypass 2FA enabled, then add it under Settings → Secrets and variables → Actions → New repository secret. Without it only the publish step fails; the tests still run.
+
+Preview the next version locally without touching any file:
+
+```shell
+node tools/bump-version.cjs --dry-run
+```
+
 ## Credits and license
 
 - Fork maintenance: [freedomgod](https://github.com/freedomgod/hexo-theme-webstack-next).
